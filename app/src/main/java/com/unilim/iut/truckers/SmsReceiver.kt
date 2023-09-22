@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.telephony.SmsMessage
 import android.util.Log
+import android.widget.Toast
 
 class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -19,8 +20,8 @@ class SmsReceiver : BroadcastReceiver() {
                         val sender = smsMessage.originatingAddress
                         val messageBody = smsMessage.messageBody
 
-                        // Imprimez les messages reçus dans le terminal (Log)
-                        Log.d("SmsReceiver", "SMS reçu de $sender : $messageBody")
+                        Toast.makeText(context, "SMS reçu de $sender : $messageBody", Toast.LENGTH_LONG).show()
+                        Log.d("SMS", "SMS reçu de $sender : $messageBody")
                     }
                 }
             }
