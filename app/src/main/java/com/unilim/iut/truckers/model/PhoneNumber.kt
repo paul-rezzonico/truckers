@@ -12,4 +12,19 @@ data class PhoneNumber(val phoneNumber: String) {
         val regex = """0[1-9]\d{8}"""
         return phoneNumber.matches(regex.toRegex())
     }
+
+    override fun toString(): String {
+        return phoneNumber
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null || other !is PhoneNumber) {
+            return false
+        }
+        return phoneNumber == other.phoneNumber
+    }
+
+    override fun hashCode(): Int {
+        return phoneNumber.hashCode()
+    }
 }
