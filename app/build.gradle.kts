@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.unilim.iut.truckers"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.unilim.iut.truckers"
@@ -57,7 +57,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("io.strikt:strikt-core:0.31.0")
+    testImplementation("io.strikt:strikt-core:0.34.0")
     testImplementation("io.mockk:mockk:1.4.1")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -66,5 +66,4 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-
 }
