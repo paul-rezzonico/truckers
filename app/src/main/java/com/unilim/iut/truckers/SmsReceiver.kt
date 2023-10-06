@@ -9,6 +9,7 @@ import android.util.Log
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.FileInputStream
@@ -25,7 +26,6 @@ class SmsReceiver : BroadcastReceiver() {
                         val sender = smsMessage.originatingAddress
                         val messageBody = smsMessage.messageBody
 
-                        createWhitelistFromJson(context)
                         val whitelist = loadWhitelistFromJson(context)
 
                         if (sender?.let { isNumberInWhitelist(it, whitelist.toSet()) } == true) {
@@ -37,32 +37,6 @@ class SmsReceiver : BroadcastReceiver() {
                     }
                 }
             }
-        }
-    }
-
-    private fun createWhitelistFromJson(context: Context?) {
-        // Création de la liste blanche
-        val whitelist = listOf("1234567890", "9876543210", "5555555555")
-
-        // Création de l'objet JSON
-        val jsonObject = JSONObject()
-        jsonObject.put("whitelist", JSONArray(whitelist))
-
-        // Chemin du fichier JSON de sortie
-        val filePath = "whitelist.json"
-
-        // Écriture de l'objet JSON dans le fichier
-        try {
-            // Ouverture du fichier en écriture dans le stockage interne de l'application
-            val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
-
-            // Écriture de l'objet JSON dans le fichier
-            outputStream?.write(jsonObject.toString(4).toByteArray())
-            outputStream?.close()
-
-            Log.d("SMSReceiver","Fichier JSON sauvegardé avec succès : $filePath")
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
