@@ -8,6 +8,10 @@ import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.IntentFilter
 
 class MainActivity : Activity() {
 
@@ -24,13 +28,25 @@ class MainActivity : Activity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
         }
 
-        // Démarrez le service SmsReceiverService pour écouter les SMS en arrière-plan
-        val intent = Intent(this, SmsReceiverService::class.java)
-        startService(intent)
+        startService(Intent(this, SmsReceiverService::class.java))
         finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+    }
+
+    private fun scheduleAlarm(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, SmsReceiverService::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
+            PendingIntent.FLAG_IMMUTABLE)
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis(),
+            60 * 1000, // toutes les minutes
+            pendingIntent
+        )
     }
 }
