@@ -15,6 +15,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
 import com.unilim.iut.truckers.model.PhoneNumber
+import com.unilim.iut.truckers.service.SmsReceiverService
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -24,7 +25,6 @@ class MainActivity : Activity() {
 
     private val SMS_PERMISSION_CODE = 123
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,26 +46,20 @@ class MainActivity : Activity() {
     private fun createWhitelistFromJson(context: Context?) {
         val filePath = "whitelist.json"
 
-        // Verification of the existence of the JSON file
         val file = File(context?.filesDir, filePath)
         if (file.exists()) {
             Log.d("SMSReceiver", "Le fichier JSON existe déjà : $filePath")
             return
         }
 
-        // Whitelist creation
         val whitelist = listOf(PhoneNumber("0123456789").toString(), PhoneNumber("0987654321").toString(), PhoneNumber("0555555555").toString())
 
-        // JSON object creation
         val jsonObject = JSONObject()
         jsonObject.put("whitelist", JSONArray(whitelist))
 
-        // Writing the JSON object in the JSON file
         try {
-            // Opening the JSON file
             val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
 
-            // Writing the JSON object in the JSON file
             outputStream?.write(jsonObject.toString(4).toByteArray())
             outputStream?.close()
 
