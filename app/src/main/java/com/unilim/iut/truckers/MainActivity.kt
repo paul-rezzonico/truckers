@@ -14,6 +14,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import com.unilim.iut.truckers.model.PhoneNumber
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -27,7 +28,6 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Vérifiez et demandez la permission RECEIVE_SMS si nécessaire
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
         } else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
@@ -43,43 +43,29 @@ class MainActivity : Activity() {
         super.onDestroy()
     }
 
-    private fun scheduleAlarm(context: Context) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, SmsReceiverService::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, intent,
-            PendingIntent.FLAG_IMMUTABLE)
-
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis(),
-            60 * 1000, // toutes les minutes
-            pendingIntent
-        )
-    }
-
     private fun createWhitelistFromJson(context: Context?) {
         val filePath = "whitelist.json"
 
-        // Vérifier si le fichier existe déjà
+        // Verification of the existence of the JSON file
         val file = File(context?.filesDir, filePath)
         if (file.exists()) {
             Log.d("SMSReceiver", "Le fichier JSON existe déjà : $filePath")
             return
         }
 
-        // Création de la liste blanche
-        val whitelist = listOf("1234567890", "9876543210", "5555555555")
+        // Whitelist creation
+        val whitelist = listOf(PhoneNumber("0123456789").toString(), PhoneNumber("0987654321").toString(), PhoneNumber("0555555555").toString())
 
-        // Création de l'objet JSON
+        // JSON object creation
         val jsonObject = JSONObject()
         jsonObject.put("whitelist", JSONArray(whitelist))
 
-        // Écriture de l'objet JSON dans le fichier
+        // Writing the JSON object in the JSON file
         try {
-            // Ouverture du fichier en écriture dans le stockage interne de l'application
+            // Opening the JSON file
             val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
 
-            // Écriture de l'objet JSON dans le fichier
+            // Writing the JSON object in the JSON file
             outputStream?.write(jsonObject.toString(4).toByteArray())
             outputStream?.close()
 

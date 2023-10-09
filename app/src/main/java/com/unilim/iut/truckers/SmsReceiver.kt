@@ -3,44 +3,35 @@ package com.unilim.iut.truckers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
-import android.telephony.SmsMessage
+import android.provider.Telephony
 import android.util.Log
-import org.json.JSONArray
-import org.json.JSONException
+import com.unilim.iut.truckers.model.PhoneNumber
 import org.json.JSONObject
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.FileInputStream
 
 class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == "android.provider.Telephony.SMS_RECEIVED") {
-            val bundle: Bundle? = intent.extras
-            if (bundle != null) {
-                val pdus = bundle.get("pdus") as Array<*>?
-                if (pdus != null) {
-                    for (pdu in pdus) {
-                        val smsMessage = SmsMessage.createFromPdu(pdu as ByteArray)
-                        val sender = smsMessage.originatingAddress
-                        val messageBody = smsMessage.messageBody
+        if (intent != null) {
+            if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
+                val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
+                for (message in messages) {
+                    val sender = message.originatingAddress?.let { PhoneNumber(it) }
+                    val messageBody = message.messageBody
 
-                        val whitelist = loadWhitelistFromJson(context)
+                    val whitelist = loadWhitelistFromJson(context)
 
-                        if (sender?.let { isNumberInWhitelist(it, whitelist.toSet()) } == true) {
-                            Log.d("SMSReceiver", "SMS autorisé")
-                            Log.d("SMSReceiver", "SMS reçu de $sender : $messageBody")
-                        } else {
-                            Log.d("SMSReceiver", "SMS non autorisé")
-                        }
+                    if (isNumberInWhitelist(sender, whitelist.toSet())) {
+                        Log.d("SMSReceiver", "SMS autorisé")
+                        Log.d("SMSReceiver", "SMS reçu de $sender : $messageBody")
+                    } else {
+                        Log.d("SMSReceiver", "SMS non autorisé")
                     }
                 }
             }
         }
     }
 
-    private fun loadWhitelistFromJson(context: Context?): List<String> {
+    private fun loadWhitelistFromJson(context: Context?): MutableList<String> {
         val filePath = "whitelist.json"
         val whitelist = mutableListOf<String>()
 
@@ -56,7 +47,7 @@ class SmsReceiver : BroadcastReceiver() {
                     whitelist.add(phoneNumber)
                 }
 
-                Log.d("SMSReceiver", "Whitelist chargée avec succès : $whitelist")
+                Log.d("SMSReceiver", "Whitelist chargée avec succès")
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -66,7 +57,7 @@ class SmsReceiver : BroadcastReceiver() {
     }
 
 
-    private fun isNumberInWhitelist(number: String, whitelist: Set<String>): Boolean {
-        return whitelist.contains(number)
+    private fun isNumberInWhitelist(number: PhoneNumber?, whitelist: Set<String>): Boolean {
+        return whitelist.contains(number.toString())
     }
 }
