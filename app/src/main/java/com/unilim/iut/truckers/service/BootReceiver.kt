@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 
 class BootReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            val launchIntent = context?.packageManager?.getLaunchIntentForPackage(context.packageName)
-            launchIntent?.let {
+    override fun onReceive(contexte: Context?, intention: Intent?) {
+        if (intention?.action == Intent.ACTION_BOOT_COMPLETED) {
+            val intentionDeLancement = contexte?.packageManager?.getLaunchIntentForPackage(contexte.packageName)
+            intentionDeLancement?.let {
                 it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                context.startActivity(it)
+                contexte.startActivity(it)
             }
         }
     }

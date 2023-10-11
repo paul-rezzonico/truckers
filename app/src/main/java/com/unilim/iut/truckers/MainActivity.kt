@@ -1,24 +1,17 @@
 package com.unilim.iut.truckers
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.unilim.iut.truckers.controller.WhiteListController
-import com.unilim.iut.truckers.model.PhoneNumber
 import com.unilim.iut.truckers.service.SmsReceiverService
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
 
 class MainActivity : Activity() {
 
-    private val whiteListController = WhiteListController()
+    private val controlleurListeBlanche = WhiteListController()
     private val SMS_PERMISSION_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,44 +23,12 @@ class MainActivity : Activity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
         }
 
-        whiteListController.createWhitelistFromJson(this)
+        controlleurListeBlanche.creationListeBlanche(this)
         startService(Intent(this, SmsReceiverService::class.java))
         finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-    }
-
-    private fun createWhitelistFromJson(context: Context?) {
-        val filePath = "whitelist.json"
-
-        // Verification of the existence of the JSON file
-        val file = File(context?.filesDir, filePath)
-        if (file.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $filePath")
-            return
-        }
-
-        // Whitelist creation
-        val whitelist = listOf(PhoneNumber("0123456789").phoneNumber, PhoneNumber("0987654321").phoneNumber, PhoneNumber("0555555555").phoneNumber)
-
-        // JSON object creation
-        val jsonObject = JSONObject()
-        jsonObject.put("whitelist", JSONArray(whitelist))
-
-        // Writing the JSON object in the JSON file
-        try {
-            // Opening the JSON file
-            val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
-
-            // Writing the JSON object in the JSON file
-            outputStream?.write(jsonObject.toString(4).toByteArray())
-            outputStream?.close()
-
-            Log.d("SMSReceiver","Fichier JSON sauvegardé avec succès : $filePath")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }

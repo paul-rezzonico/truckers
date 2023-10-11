@@ -10,14 +10,14 @@ class SmsReceiverService : Service() {
 
     private val smsReceiver = SmsReceiver()
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val intentFilter = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-        registerReceiver(smsReceiver, intentFilter)
+    override fun onStartCommand(intention: Intent?, drapeaux: Int, idDebut: Int): Int {
+        val filtreIntention = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+        registerReceiver(smsReceiver, filtreIntention)
 
         return START_STICKY
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
+    override fun onBind(intention: Intent?): IBinder? {
         return null
     }
 

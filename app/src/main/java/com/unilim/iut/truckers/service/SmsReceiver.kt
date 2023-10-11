@@ -12,19 +12,19 @@ class SmsReceiver : BroadcastReceiver() {
 
     private val whiteListController = WhiteListController();
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent != null) {
-            if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
-                val messages = Telephony.Sms.Intents.getMessagesFromIntent(intent)
+    override fun onReceive(contexte: Context?, intention: Intent?) {
+        if (intention != null) {
+            if (intention.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
+                val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
                 for (message in messages) {
-                    val sender = message.originatingAddress?.let { PhoneNumber(it) }
-                    val messageBody = message.messageBody
+                    val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
+                    val corpsMessage = message.messageBody
 
-                    val whitelist = whiteListController.loadWhitelistFromJson(context)
+                    val listeBlanche = whiteListController.chargementListeBlanche(contexte)
 
-                    if (whiteListController.isNumberInWhitelist(sender, whitelist.toSet())) {
+                    if (whiteListController.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
                         Log.d("SMSReceiver", "SMS autorisé")
-                        Log.d("SMSReceiver", "SMS reçu de $sender : $messageBody")
+                        Log.d("SMSReceiver", "SMS reçu de $numeroEmetteur : $corpsMessage")
                     } else {
                         Log.d("SMSReceiver", "SMS non autorisé")
                     }

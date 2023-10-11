@@ -14,30 +14,35 @@ class WhiteListController {
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de numéros de téléphone.
      *
-     * @param context Ce paramètre est le contexte de l'application.
+     * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction ne retourne rien.
      */
-    fun createWhitelistFromJson(context: Context?) {
-        val filePath = "whitelist.json"
+    fun creationListeBlanche(contexte: Context?) {
+        val cheminFichier = "whitelist.json"
 
-        val file = File(context?.filesDir, filePath)
-        if (file.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $filePath")
+        val fichier = File(contexte?.filesDir, cheminFichier)
+        if (fichier.exists()) {
+            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
             return
         }
 
-        val whitelist = listOf(PhoneNumber("0123456789").toString(), PhoneNumber("0987654321").toString(), PhoneNumber("0555555555").toString())
+        val whitelist = listOf(
+            PhoneNumber("0123456789").toString(),
+            PhoneNumber("0987654321").toString(),
+            PhoneNumber("0555555555").toString()
+        )
 
-        val jsonObject = JSONObject()
-        jsonObject.put("whitelist", JSONArray(whitelist))
+        val objetJson = JSONObject()
+        objetJson.put("whitelist", JSONArray(whitelist))
 
         try {
-            val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
+            val fluxSortie: FileOutputStream? =
+                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
 
-            outputStream?.write(jsonObject.toString(4).toByteArray())
-            outputStream?.close()
+            fluxSortie?.write(objetJson.toString(4).toByteArray())
+            fluxSortie?.close()
 
-            Log.d("SMSReceiver","Fichier JSON sauvegardé avec succès : $filePath")
+            Log.d("SMSReceiver", "Fichier JSON sauvegardé avec succès : $cheminFichier")
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -49,7 +54,7 @@ class WhiteListController {
      * @param context Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste de numéros de téléphone.
      */
-    fun loadWhitelistFromJson(context: Context?): MutableList<String> {
+    fun chargementListeBlanche(context: Context?): MutableList<String> {
         val filePath = "whitelist.json"
         val whitelist = mutableListOf<String>()
 
@@ -78,11 +83,11 @@ class WhiteListController {
     /**
      * Cette fonction permet de vérifier si un numéro de téléphone est autorisé ou non.
      *
-     * @param number Ce paramètre est le numéro de téléphone à vérifier.
-     * @param whitelist Ce paramètre est la liste des numéros de téléphone autorisés.
+     * @param numero Ce paramètre est le numéro de téléphone à vérifier.
+     * @param listeBlanche Ce paramètre est la liste des numéros de téléphone autorisés.
      * @return Cette fonction retourne un booléen indiquant si le numéro de téléphone est autorisé.
      */
-    fun isNumberInWhitelist(number: PhoneNumber?, whitelist: Set<String>): Boolean {
-        return whitelist.contains(number?.phoneNumber)
+    fun numeroDansLaListeBlanche(numero: PhoneNumber?, listeBlanche: Set<String>): Boolean {
+        return listeBlanche.contains(numero?.phoneNumber)
     }
 }
