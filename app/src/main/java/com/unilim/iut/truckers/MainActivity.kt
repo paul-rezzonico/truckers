@@ -14,6 +14,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import com.unilim.iut.truckers.controller.WhiteListController
 import com.unilim.iut.truckers.model.PhoneNumber
 import com.unilim.iut.truckers.service.SmsReceiverService
 import org.json.JSONArray
@@ -23,6 +24,7 @@ import java.io.FileOutputStream
 
 class MainActivity : Activity() {
 
+    private val whiteListController = WhiteListController()
     private val SMS_PERMISSION_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,38 +36,12 @@ class MainActivity : Activity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
         }
 
-        createWhitelistFromJson(this)
+        whiteListController.createWhitelistFromJson(this)
         startService(Intent(this, SmsReceiverService::class.java))
         finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-    }
-
-    private fun createWhitelistFromJson(context: Context?) {
-        val filePath = "whitelist.json"
-
-        val file = File(context?.filesDir, filePath)
-        if (file.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $filePath")
-            return
-        }
-
-        val whitelist = listOf(PhoneNumber("0123456789").toString(), PhoneNumber("0987654321").toString(), PhoneNumber("0555555555").toString())
-
-        val jsonObject = JSONObject()
-        jsonObject.put("whitelist", JSONArray(whitelist))
-
-        try {
-            val outputStream: FileOutputStream? = context?.openFileOutput(filePath, Context.MODE_PRIVATE)
-
-            outputStream?.write(jsonObject.toString(4).toByteArray())
-            outputStream?.close()
-
-            Log.d("SMSReceiver","Fichier JSON sauvegardé avec succès : $filePath")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 }
