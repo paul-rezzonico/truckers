@@ -1,4 +1,4 @@
-package com.unilim.iut.truckers
+package com.unilim.iut.truckers.service
 
 import android.content.BroadcastReceiver
 import android.content.Context
