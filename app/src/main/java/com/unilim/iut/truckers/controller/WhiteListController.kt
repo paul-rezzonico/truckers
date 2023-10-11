@@ -17,7 +17,7 @@ class WhiteListController {
      * @param context Ce paramètre est le contexte de l'application.
      * @return Cette fonction ne retourne rien.
      */
-    public fun createWhitelistFromJson(context: Context?) {
+    fun createWhitelistFromJson(context: Context?) {
         val filePath = "whitelist.json"
 
         val file = File(context?.filesDir, filePath)
@@ -49,7 +49,7 @@ class WhiteListController {
      * @param context Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste de numéros de téléphone.
      */
-    public fun loadWhitelistFromJson(context: Context?): MutableList<String> {
+    fun loadWhitelistFromJson(context: Context?): MutableList<String> {
         val filePath = "whitelist.json"
         val whitelist = mutableListOf<String>()
 
@@ -82,7 +82,7 @@ class WhiteListController {
      * @param whitelist Ce paramètre est la liste des numéros de téléphone autorisés.
      * @return Cette fonction retourne un booléen indiquant si le numéro de téléphone est autorisé.
      */
-    public fun isNumberInWhitelist(number: PhoneNumber?, whitelist: Set<String>): Boolean {
-        return whitelist.contains(number.toString())
+    fun isNumberInWhitelist(number: PhoneNumber?, whitelist: Set<String>): Boolean {
+        return whitelist.contains(number?.phoneNumber)
     }
 }
