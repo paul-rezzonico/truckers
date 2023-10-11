@@ -64,7 +64,7 @@ class MessageController {
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val listeMessage = json?.getJSONArray("whitelist")
+        val listeMessage = json?.getJSONArray("messages")
         listeMessage?.put(message)
 
         val objetJson = JSONObject()

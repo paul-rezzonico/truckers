@@ -6,11 +6,11 @@ import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
 import com.unilim.iut.truckers.model.PhoneNumber
-import com.unilim.iut.truckers.controller.WhiteListController
+import com.unilim.iut.truckers.controller.WhitelistController
 
 class SmsReceiver : BroadcastReceiver() {
 
-    private val whiteListController = WhiteListController();
+    private val whiteListController = WhitelistController();
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention != null) {

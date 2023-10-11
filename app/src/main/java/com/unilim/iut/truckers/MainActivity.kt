@@ -7,12 +7,12 @@ import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.unilim.iut.truckers.controller.MessageController
-import com.unilim.iut.truckers.controller.WhiteListController
+import com.unilim.iut.truckers.controller.WhitelistController
 import com.unilim.iut.truckers.service.SmsReceiverService
 
 class MainActivity : Activity() {
 
-    private val controlleurListeBlanche = WhiteListController()
+    private val controlleurListeBlanche = WhitelistController()
     private val controllerMessage = MessageController()
     private val SMS_PERMISSION_CODE = 123
 
