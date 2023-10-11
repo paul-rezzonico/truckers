@@ -6,12 +6,14 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.unilim.iut.truckers.controller.MessageController
 import com.unilim.iut.truckers.controller.WhiteListController
 import com.unilim.iut.truckers.service.SmsReceiverService
 
 class MainActivity : Activity() {
 
     private val controlleurListeBlanche = WhiteListController()
+    private val controllerMessage = MessageController()
     private val SMS_PERMISSION_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,6 +26,8 @@ class MainActivity : Activity() {
         }
 
         controlleurListeBlanche.creationListeBlanche(this)
+        controllerMessage.creationJsonMauvaisMessage(this)
+        controllerMessage.creationJsonBonMessage(this)
         startService(Intent(this, SmsReceiverService::class.java))
         finish()
     }

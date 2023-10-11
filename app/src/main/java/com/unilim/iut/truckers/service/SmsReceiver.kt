@@ -24,7 +24,7 @@ class SmsReceiver : BroadcastReceiver() {
 
                     if (whiteListController.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
                         Log.d("SMSReceiver", "SMS autorisé")
-                        Log.d("SMSReceiver", "SMS reçu de $numeroEmetteur : $corpsMessage")
+                        Log.d("SMSReceiver", "SMS reçu de ${numeroEmetteur?.phoneNumber} : $corpsMessage")
                     } else {
                         Log.d("SMSReceiver", "SMS non autorisé")
                     }

@@ -42,7 +42,7 @@ class WhiteListController {
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
 
-            Log.d("SMSReceiver", "Fichier JSON sauvegardé avec succès : $cheminFichier")
+            Log.d("SMSReceiver", "Fichier JSON WhiteList sauvegardé avec succès : $cheminFichier")
         } catch (e: Exception) {
             e.printStackTrace()
         }
