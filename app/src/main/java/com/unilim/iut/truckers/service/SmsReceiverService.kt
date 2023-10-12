@@ -1,28 +1,21 @@
 package com.unilim.iut.truckers.service
 
-import android.app.Service
-import android.content.Intent
+import android.content.Context
 import android.content.IntentFilter
-import android.os.IBinder
 import android.provider.Telephony
+import android.util.Log
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 
-class SmsReceiverService : Service() {
+class SmsReceiverService(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     private val smsReceiver = SmsReceiver()
 
-    override fun onStartCommand(intention: Intent?, drapeaux: Int, idDebut: Int): Int {
+    override fun doWork(): Result {
         val filtreIntention = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-        registerReceiver(smsReceiver, filtreIntention)
+        applicationContext.registerReceiver(smsReceiver, filtreIntention)
+        Log.d("SMSReceiverService", "Service actif")
 
-        return START_STICKY
-    }
-
-    override fun onBind(intention: Intent?): IBinder? {
-        return null
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterReceiver(smsReceiver)
+        return Result.success()
     }
 }

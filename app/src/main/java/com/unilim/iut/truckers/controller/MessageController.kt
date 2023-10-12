@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.unilim.iut.truckers.model.Message
 import org.json.JSONArray
 import org.json.JSONObject

@@ -23,11 +23,12 @@ class SmsReceiver : BroadcastReceiver() {
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
                     val corpsMessage = message.messageBody
 
-                    val listeBlanche = controlleurListeBlanche.chargementListeBlanche(contexte)
-                    val numeroAdmin = controlleurListeBlanche.chargementNumeroAdmin(contexte)
+                    val listeBlanche = controlleurListeBlanche.chargementListeBlanche(contexte, false)
+                    val numeroAdmin = controlleurListeBlanche.chargementListeBlanche(contexte, true)
 
                     if (controlleurListeBlanche.numeroAdministrateur(numeroEmetteur, numeroAdmin)) {
                         Log.d("SMSReceiver", "SMS administrateur autorisé")
+                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     } else {
                         if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
                             Log.d("SMSReceiver", "SMS autorisé")

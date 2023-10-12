@@ -48,6 +48,12 @@ class WhiteListController {
         }
     }
 
+    /**
+     * Cette fonction permet de charger le contnu d'un fichier JSON.
+     *
+     * @param context Ce paramètre est le contexte de l'application.
+     * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
+     */
     fun chargementJson(context: Context?): JSONObject {
         val filePath = "whitelist.json"
         var jsonObject = JSONObject()
@@ -69,48 +75,37 @@ class WhiteListController {
     }
 
     /**
-     * Cette fonction permet de charger une liste de numéros de téléphone à partir d'un fichier JSON.
+     * Cette fonction permet de charger une liste de numéros de téléphone dépendant du type d'utilisateur.
      *
      * @param context Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste de numéros de téléphone.
      */
-    fun chargementListeBlanche(context: Context?): MutableList<String> {
+    fun chargementListeBlanche(context: Context?, admin: Boolean): MutableList<String> {
         val jsonObject = chargementJson(context)
         val whitelist = mutableListOf<String>()
 
-        try {
-            val jsonArray = jsonObject.getJSONArray("whitelist")
+        if (admin) {
+            val numeroAdmin = jsonObject.getString("numero_admin")
+            whitelist.add(numeroAdmin)
+            return whitelist
+        } else {
+            try {
+                val jsonArray = jsonObject.getJSONArray("whitelist")
 
-            for (i in 0 until jsonArray.length()) {
-                val phoneNumber = jsonArray.getString(i)
-                whitelist.add(phoneNumber)
+                for (i in 0 until jsonArray.length()) {
+                    val phoneNumber = jsonArray.getString(i)
+                    whitelist.add(phoneNumber)
+                }
+
+                Log.d("SMSReceiver", "Whitelist chargée avec succès")
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("SMSReceiver", "Erreur lors du chargement de la whitelist")
             }
 
-            Log.d("SMSReceiver", "Whitelist chargée avec succès")
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("SMSReceiver", "Erreur lors du chargement de la whitelist")
+            return whitelist
         }
-
-        return whitelist
-    }
-
-    fun chargementNumeroAdmin(context: Context?): String {
-        val jsonObject = chargementJson(context)
-        var numeroAdmin = ""
-
-        try {
-            numeroAdmin = jsonObject.getString("numero_admin")
-
-            Log.d("SMSReceiver", "Numéro administrateur chargé avec succès")
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("SMSReceiver", "Erreur lors du chargement du numéro administrateur")
-        }
-
-        return numeroAdmin
     }
 
     /**
@@ -124,7 +119,14 @@ class WhiteListController {
         return listeBlanche.contains(numero?.phoneNumber)
     }
 
-    fun numeroAdministrateur(numero: PhoneNumber?, numeroAdmin: String): Boolean {
-        return numero?.phoneNumber.equals(numeroAdmin)
+    /**
+     * Cette fonction permet de vérifier si un numéro de téléphone est celui de l'administrateur.
+     *
+     * @param numero Ce paramètre est le numéro de téléphone à vérifier.
+     * @param numeroAdmin Ce paramètre est le numéro de téléphone de l'administrateur.
+     * @return Cette fonction retourne un booléen indiquant si le numéro de téléphone est celui de l'administrateur.
+     */
+    fun numeroAdministrateur(numero: PhoneNumber?, numeroAdmin: MutableList<String>): Boolean {
+        return numeroAdmin.contains(numero?.phoneNumber)
     }
 }

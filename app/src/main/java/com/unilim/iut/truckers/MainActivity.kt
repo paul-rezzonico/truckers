@@ -1,14 +1,17 @@
 package com.unilim.iut.truckers
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.unilim.iut.truckers.controller.MessageController
 import com.unilim.iut.truckers.controller.WhiteListController
 import com.unilim.iut.truckers.service.SmsReceiverService
+import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
 
@@ -28,7 +31,13 @@ class MainActivity : Activity() {
         controlleurListeBlanche.creationListeBlanche(this)
         controllerMessage.creationJsonMauvaisMessage(this)
         controllerMessage.creationJsonBonMessage(this)
-        startService(Intent(this, SmsReceiverService::class.java))
+
+        val workManager = WorkManager.getInstance(this)
+        val smsWorkerRequest = PeriodicWorkRequest.Builder(SmsReceiverService::class.java, 15, TimeUnit.MINUTES)
+            .build()
+
+        workManager.enqueue(smsWorkerRequest)
+
         finish()
     }
 
