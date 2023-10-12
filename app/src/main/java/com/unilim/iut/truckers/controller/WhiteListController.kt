@@ -27,12 +27,12 @@ class WhiteListController {
         }
 
         val whitelist = listOf(
-            PhoneNumber("0123456789").toString(),
-            PhoneNumber("0987654321").toString(),
-            PhoneNumber("0555555555").toString()
+            PhoneNumber("0987654321").phoneNumber,
+            PhoneNumber("0555555555").phoneNumber
         )
 
         val objetJson = JSONObject()
+        objetJson.put("numero_admin", PhoneNumber("0123456789").phoneNumber)
         objetJson.put("whitelist", JSONArray(whitelist))
 
         try {
@@ -48,6 +48,26 @@ class WhiteListController {
         }
     }
 
+    fun chargementJson(context: Context?): JSONObject {
+        val filePath = "whitelist.json"
+        var jsonObject = JSONObject()
+
+        try {
+            val inputStream: FileInputStream? = context?.openFileInput(filePath)
+            if (inputStream != null) {
+                val jsonStr = inputStream.bufferedReader().use { it.readText() }
+                jsonObject = JSONObject(jsonStr)
+
+                Log.d("SMSReceiver", "JSON chargé avec succès")
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("SMSReceiver", "Erreur lors du chargement du JSON")
+        }
+
+        return jsonObject
+    }
+
     /**
      * Cette fonction permet de charger une liste de numéros de téléphone à partir d'un fichier JSON.
      *
@@ -55,29 +75,42 @@ class WhiteListController {
      * @return Cette fonction retourne une liste de numéros de téléphone.
      */
     fun chargementListeBlanche(context: Context?): MutableList<String> {
-        val filePath = "whitelist.json"
+        val jsonObject = chargementJson(context)
         val whitelist = mutableListOf<String>()
 
         try {
-            val inputStream: FileInputStream? = context?.openFileInput(filePath)
-            if (inputStream != null) {
-                val jsonStr = inputStream.bufferedReader().use { it.readText() }
-                val jsonObject = JSONObject(jsonStr)
-                val jsonArray = jsonObject.getJSONArray("whitelist")
+            val jsonArray = jsonObject.getJSONArray("whitelist")
 
-                for (i in 0 until jsonArray.length()) {
-                    val phoneNumber = jsonArray.getString(i)
-                    whitelist.add(phoneNumber)
-                }
-
-                Log.d("SMSReceiver", "Whitelist chargée avec succès")
+            for (i in 0 until jsonArray.length()) {
+                val phoneNumber = jsonArray.getString(i)
+                whitelist.add(phoneNumber)
             }
+
+            Log.d("SMSReceiver", "Whitelist chargée avec succès")
+
         } catch (e: Exception) {
             e.printStackTrace()
             Log.d("SMSReceiver", "Erreur lors du chargement de la whitelist")
         }
 
         return whitelist
+    }
+
+    fun chargementNumeroAdmin(context: Context?): String {
+        val jsonObject = chargementJson(context)
+        var numeroAdmin = ""
+
+        try {
+            numeroAdmin = jsonObject.getString("numero_admin")
+
+            Log.d("SMSReceiver", "Numéro administrateur chargé avec succès")
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Log.d("SMSReceiver", "Erreur lors du chargement du numéro administrateur")
+        }
+
+        return numeroAdmin
     }
 
     /**
@@ -89,5 +122,9 @@ class WhiteListController {
      */
     fun numeroDansLaListeBlanche(numero: PhoneNumber?, listeBlanche: Set<String>): Boolean {
         return listeBlanche.contains(numero?.phoneNumber)
+    }
+
+    fun numeroAdministrateur(numero: PhoneNumber?, numeroAdmin: String): Boolean {
+        return numero?.phoneNumber.equals(numeroAdmin)
     }
 }

@@ -24,14 +24,21 @@ class SmsReceiver : BroadcastReceiver() {
                     val corpsMessage = message.messageBody
 
                     val listeBlanche = controlleurListeBlanche.chargementListeBlanche(contexte)
+                    val numeroAdmin = controlleurListeBlanche.chargementNumeroAdmin(contexte)
 
-                    if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
-                        Log.d("SMSReceiver", "SMS autorisé")
-                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                    if (controlleurListeBlanche.numeroAdministrateur(numeroEmetteur, numeroAdmin)) {
+                        Log.d("SMSReceiver", "SMS administrateur autorisé")
                     } else {
-                        Log.d("SMSReceiver", "SMS non autorisé")
-                        controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                        if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
+                            Log.d("SMSReceiver", "SMS autorisé")
+                            controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                        } else {
+                            Log.d("SMSReceiver", "SMS non autorisé")
+                            controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                        }
                     }
+
+
                 }
             }
         }
