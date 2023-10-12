@@ -1,5 +1,6 @@
 package com.unilim.iut.truckers.test.unit
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.unilim.iut.truckers.model.PhoneNumber
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -9,28 +10,28 @@ import org.junit.Test
 class PhoneNumberTest {
 
     @Test
-    fun shouldThrowExceptionWhenPhoneNumberIsInvalid() {
+    fun devraitLancerExceptionSiNumeroDeTelephoneNonValide() {
         Assert.assertThrows(IllegalArgumentException::class.java) {
             PhoneNumber("002345678")
         }
     }
 
     @Test
-    fun shouldNotThrowExceptionWhenPhoneNumberIsValid() {
-        val phoneNumber = PhoneNumber("0123456789")
+    fun neDevraitPasLancerExceptionSiNumeroDeTelephoneValide() {
+        val numeroDeTelephone = PhoneNumber("0123456789")
 
-        assertThat("0123456789", Matchers.equalTo(phoneNumber.toString()))
+        assertThat("0123456789", Matchers.equalTo(numeroDeTelephone.toString()))
     }
 
     @Test
-    fun shouldThrowExceptionWhenPhoneNumberIsTooLong() {
+    fun devraitLancerExceptionSiNumeroDeTelephoneTropLong() {
         Assert.assertThrows(IllegalArgumentException::class.java) {
             PhoneNumber("01234567890")
         }
     }
 
     @Test
-    fun shouldThrowExceptionWhenPhoneNumberIsTooShort() {
+    fun devraitLancerExceptionSiNumeroDeTelephoneTropCourt() {
         Assert.assertThrows(IllegalArgumentException::class.java) {
             PhoneNumber("012345678")
         }
