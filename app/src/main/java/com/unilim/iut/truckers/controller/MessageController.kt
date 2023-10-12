@@ -2,7 +2,11 @@ package com.unilim.iut.truckers.controller
 
 import android.content.Context
 import android.util.Log
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.unilim.iut.truckers.model.Message
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
@@ -26,7 +30,7 @@ class MessageController {
         }
 
         val objetJson = JSONObject()
-        objetJson.put("whitelist", null)
+        objetJson.put("messages", null)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -49,7 +53,9 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        //SERIALISER LE MESSAGE AVANT DE L'AJOUTER DANS LE JSON
+        val jackson = ObjectMapper().registerModule(KotlinModule())
+        val messageSerialise = jackson.writeValueAsString(message)
+        Log.d("SMSReceiver", "messageSerialise : $messageSerialise")
 
         val cheminFichier = "RightMessage.json"
 
@@ -64,8 +70,13 @@ class MessageController {
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val listeMessage = json?.getJSONArray("messages")
-        listeMessage?.put(message)
+        val listeMessage : JSONArray? = if (json.toString() == "{}") {
+            JSONArray()
+        } else {
+            json?.getJSONArray("messages")
+        }
+        listeMessage?.put(messageSerialise)
+        Log.d("SMSReceiver", "listeMessage : $listeMessage")
 
         val objetJson = JSONObject()
         objetJson.put("messages", listeMessage)
@@ -122,7 +133,8 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        //SERIALISER LE MESSAGE AVANT DE L'AJOUTER DANS LE JSON
+        val jackson = ObjectMapper().registerModule(KotlinModule())
+        val messageSerialise = jackson.writeValueAsString(message)
 
         val cheminFichier = "WrongMessage.json"
 
@@ -138,7 +150,7 @@ class MessageController {
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
         val listeMessage = json?.getJSONArray("messages")
-        listeMessage?.put(message)
+        listeMessage?.put(messageSerialise)
 
         val objetJson = JSONObject()
         objetJson.put("messages", listeMessage)

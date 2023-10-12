@@ -9,7 +9,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class WhitelistController {
+class WhiteListController {
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de numéros de téléphone.

@@ -5,12 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
+import com.unilim.iut.truckers.controller.MessageController
 import com.unilim.iut.truckers.model.PhoneNumber
-import com.unilim.iut.truckers.controller.WhitelistController
+import com.unilim.iut.truckers.controller.WhiteListController
+import com.unilim.iut.truckers.model.Message
 
 class SmsReceiver : BroadcastReceiver() {
 
-    private val whiteListController = WhitelistController();
+    private val controlleurListeBlanche = WhiteListController();
+    private val controllerMessage = MessageController();
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention != null) {
@@ -20,13 +23,14 @@ class SmsReceiver : BroadcastReceiver() {
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
                     val corpsMessage = message.messageBody
 
-                    val listeBlanche = whiteListController.chargementListeBlanche(contexte)
+                    val listeBlanche = controlleurListeBlanche.chargementListeBlanche(contexte)
 
-                    if (whiteListController.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
+                    if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
                         Log.d("SMSReceiver", "SMS autorisé")
-                        Log.d("SMSReceiver", "SMS reçu de ${numeroEmetteur?.phoneNumber} : $corpsMessage")
+                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     } else {
                         Log.d("SMSReceiver", "SMS non autorisé")
+                        controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     }
                 }
             }
