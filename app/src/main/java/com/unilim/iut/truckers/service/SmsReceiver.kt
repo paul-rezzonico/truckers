@@ -17,8 +17,10 @@ class SmsReceiver : BroadcastReceiver() {
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention != null) {
+
             if (intention.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
                 val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
+
                 for (message in messages) {
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
                     val corpsMessage = message.messageBody
@@ -29,17 +31,13 @@ class SmsReceiver : BroadcastReceiver() {
                     if (controlleurListeBlanche.numeroAdministrateur(numeroEmetteur, numeroAdmin)) {
                         Log.d("SMSReceiver", "SMS administrateur autorisé")
                         controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                    } else if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
+                        Log.d("SMSReceiver", "SMS autorisé")
+                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     } else {
-                        if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
-                            Log.d("SMSReceiver", "SMS autorisé")
-                            controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
-                        } else {
-                            Log.d("SMSReceiver", "SMS non autorisé")
-                            controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
-                        }
+                        Log.d("SMSReceiver", "SMS non autorisé")
+                        controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     }
-
-
                 }
             }
         }
