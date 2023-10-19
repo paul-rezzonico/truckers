@@ -1,6 +1,5 @@
 package com.unilim.iut.truckers
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Bundle

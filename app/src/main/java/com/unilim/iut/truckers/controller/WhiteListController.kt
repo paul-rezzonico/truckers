@@ -2,6 +2,7 @@ package com.unilim.iut.truckers.controller
 
 import android.content.Context
 import android.util.Log
+import com.unilim.iut.truckers.exception.WhitListException
 import com.unilim.iut.truckers.model.PhoneNumber
 import org.json.JSONArray
 import org.json.JSONObject
@@ -43,8 +44,8 @@ class WhiteListController {
             fluxSortie?.close()
 
             Log.d("SMSReceiver", "Fichier JSON WhiteList sauvegardé avec succès : $cheminFichier")
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: WhitListException) {
+            Log.d( "SMSReceiver", "${e.message} at $cheminFichier")
         }
     }
 
@@ -66,9 +67,8 @@ class WhiteListController {
 
                 Log.d("SMSReceiver", "JSON chargé avec succès")
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.d("SMSReceiver", "Erreur lors du chargement du JSON")
+        } catch (e: WhitListException) {
+            Log.d( "SMSReceiver", e.message)
         }
 
         return jsonObject

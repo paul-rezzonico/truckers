@@ -1,6 +1,5 @@
 package com.unilim.iut.truckers.test.unit
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.unilim.iut.truckers.model.PhoneNumber
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -20,7 +19,7 @@ class PhoneNumberTest {
     fun neDevraitPasLancerExceptionSiNumeroDeTelephoneValide() {
         val numeroDeTelephone = PhoneNumber("0123456789")
 
-        assertThat("0123456789", Matchers.equalTo(numeroDeTelephone.toString()))
+        assertThat("0123456789", Matchers.equalTo(numeroDeTelephone.phoneNumber))
     }
 
     @Test
