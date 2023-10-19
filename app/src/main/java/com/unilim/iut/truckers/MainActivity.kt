@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
+import com.unilim.iut.truckers.controller.KeyWordController
 import com.unilim.iut.truckers.controller.MessageController
 import com.unilim.iut.truckers.controller.WhiteListController
 import com.unilim.iut.truckers.service.SmsReceiverService
@@ -16,6 +17,7 @@ class MainActivity : Activity() {
 
     private val controlleurListeBlanche = WhiteListController()
     private val controllerMessage = MessageController()
+    private val controllerKeyWord = KeyWordController()
     private val SMS_PERMISSION_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +32,7 @@ class MainActivity : Activity() {
         controlleurListeBlanche.creationListeBlanche(this)
         controllerMessage.creationJsonMauvaisMessage(this)
         controllerMessage.creationJsonBonMessage(this)
+        controllerKeyWord.creationJSONMotCle(this)
 
         val workManager = WorkManager.getInstance(this)
         val smsWorkerRequest = PeriodicWorkRequest.Builder(SmsReceiverService::class.java, 15, TimeUnit.MINUTES)

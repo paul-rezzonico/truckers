@@ -13,6 +13,8 @@ import java.io.FileOutputStream
 
 class MessageController {
 
+    private val jsonController = JsonController();
+
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste d'objet Message.
      *
@@ -20,28 +22,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonBonMessage(contexte: Context?) {
-        val cheminFichier = "RightMessage.json"
-
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
-            return
-        }
-
-        val objetJson = JSONObject()
-        objetJson.put("messages", null)
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Fichier JSON RightMessage sauvegardé avec succès : $cheminFichier")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        jsonController.creationJSON(contexte, "MessageValide.json", "messages")
     }
 
     /**
@@ -52,45 +33,17 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        val jackson = ObjectMapper().registerModule(KotlinModule())
-        val messageSerialise = jackson.writeValueAsString(message)
-        Log.d("SMSReceiver", "messageSerialise : $messageSerialise")
+        jsonController.ajoutModelJSON(contexte, "MessageValide.json", "messages", message)
+    }
 
-        val cheminFichier = "RightMessage.json"
-
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJsonBonMessage(contexte)
-            return
-        }
-
-        val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
-        val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
-
-        val listeMessage : JSONArray? = if (json.toString() == "{}") {
-            JSONArray()
-        } else {
-            json?.getJSONArray("messages")
-        }
-        listeMessage?.put(messageSerialise)
-        Log.d("SMSReceiver", "listeMessage : $listeMessage")
-
-        val objetJson = JSONObject()
-        objetJson.put("messages", listeMessage)
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Fichier JSON RightMessage sauvegardé avec succès : $cheminFichier")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    /**
+     * Cette fonction permet de supprimer le fichier JSON contenant une liste d'objet Message qui sont ceux recherchés.
+     *
+     * @param contexte Ce paramètre est le contexte de l'application.
+     * @return Cette fonction ne retourne rien.
+     */
+    fun suppressionJsonBonMessage(contexte: Context?) {
+        jsonController.supressionJSON(contexte, "MessageValide.json")
     }
 
     /**
@@ -100,28 +53,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        val cheminFichier = "WrongMessage.json"
-
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
-            return
-        }
-
-        val objetJson = JSONObject()
-        objetJson.put("messages", null)
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Fichier JSON WrongMessage sauvegardé avec succès : $cheminFichier")
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        jsonController.creationJSON(contexte, "MessageInvalide.json", "messages")
     }
 
     /**
@@ -132,45 +64,16 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        val jackson = ObjectMapper().registerModule(KotlinModule())
-        val messageSerialise = jackson.writeValueAsString(message)
+        jsonController.ajoutModelJSON(contexte, "MessageInvalide.json", "messages", message)
+    }
 
-        val cheminFichier = "WrongMessage.json"
-
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJsonMauvaisMessage(contexte)
-            return
-        }
-
-        val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
-        val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
-
-        val listeMessage : JSONArray? = if (json.toString() == "{}") {
-            JSONArray()
-        } else {
-            json?.getJSONArray("messages")
-        }
-        listeMessage?.put(messageSerialise)
-
-        val objetJson = JSONObject()
-        objetJson.put("messages", listeMessage)
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d(
-                "SMSReceiver",
-                "Fichier JSON WrongMessage sauvegardé avec succès : $cheminFichier"
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+    /**
+     * Cette fonction permet de supprimer le fichier JSON contenant une liste d'objet Message qui ne sont pas ceux recherchés.
+     *
+     * @param contexte Ce paramètre est le contexte de l'application.
+     * @return Cette fonction ne retourne rien.
+     */
+    fun suppressionJsonMauvaisMessage(contexte: Context?) {
+        jsonController.supressionJSON(contexte, "MessageInvalide.json")
     }
 }

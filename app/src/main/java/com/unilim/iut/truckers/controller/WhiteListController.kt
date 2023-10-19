@@ -3,15 +3,12 @@ package com.unilim.iut.truckers.controller
 import android.content.Context
 import android.util.Log
 import com.unilim.iut.truckers.exception.ReadWhiteListException
-import com.unilim.iut.truckers.exception.WriteWhiteListException
 import com.unilim.iut.truckers.model.PhoneNumber
-import org.json.JSONArray
 import org.json.JSONObject
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class WhiteListController {
+
+    private val jsonController = JsonController()
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de numéros de téléphone.
@@ -20,34 +17,9 @@ class WhiteListController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationListeBlanche(contexte: Context?) {
-        val cheminFichier = "whitelist.json"
-
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
-            return
-        }
-
-        val whitelist = listOf(
-            PhoneNumber("0987654321").phoneNumber,
-            PhoneNumber("0555555555").phoneNumber
-        )
-
-        val objetJson = JSONObject()
-        objetJson.put("numero_admin", PhoneNumber("0123456789").phoneNumber)
-        objetJson.put("whitelist", JSONArray(whitelist))
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Fichier JSON WhiteList sauvegardé avec succès : $cheminFichier")
-        } catch (e: WriteWhiteListException) {
-            Log.d( "SMSReceiver", "${e.message} at $cheminFichier")
-        }
+        jsonController.creationJSON(contexte, "ListeBlanche.json", "liste_blanche")
+        ajoutNumeroJSON(contexte, true, PhoneNumber("0123456789"))
+        ajoutNumeroJSON(contexte, false, PhoneNumber("0666666666"))
     }
 
     /**
@@ -57,22 +29,7 @@ class WhiteListController {
      * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
      */
     fun chargementJson(context: Context?): JSONObject {
-        val filePath = "whitelist.json"
-        var jsonObject = JSONObject()
-
-        try {
-            val inputStream: FileInputStream? = context?.openFileInput(filePath)
-            if (inputStream != null) {
-                val jsonStr = inputStream.bufferedReader().use { it.readText() }
-                jsonObject = JSONObject(jsonStr)
-
-                Log.d("SMSReceiver", "JSON chargé avec succès")
-            }
-        } catch (e: ReadWhiteListException) {
-            Log.d( "SMSReceiver", e.message)
-        }
-
-        return jsonObject
+        return jsonController.chargementJSON(context, "ListeBlanche.json")
     }
 
     /**
@@ -86,19 +43,21 @@ class WhiteListController {
         val whitelist = mutableListOf<String>()
 
         if (admin) {
-            val numeroAdmin = jsonObject.getString("numero_admin")
-            whitelist.add(numeroAdmin)
-            return whitelist
+            val jsonArray = jsonObject.getJSONArray("numero_admin")
+            if (jsonArray.length() > 0) {
+                val numeroAdmin = jsonArray.getString(0)
+                whitelist.add(numeroAdmin)
+            }
         } else {
             try {
-                val jsonArray = jsonObject.getJSONArray("whitelist")
+                val jsonArray = jsonObject.getJSONArray("liste_blanche")
 
                 for (i in 0 until jsonArray.length()) {
                     val phoneNumber = jsonArray.getString(i)
                     whitelist.add(phoneNumber)
                 }
 
-                Log.d("SMSReceiver", "Whitelist chargée avec succès")
+                Log.d("SMSReceiver", "Liste Blanche chargée avec succès")
 
             } catch (e: ReadWhiteListException) {
                 Log.d("SMSReceiver", e.message)
@@ -106,6 +65,31 @@ class WhiteListController {
 
             return whitelist
         }
+        return whitelist
+    }
+
+    /**
+     * Cette fonction permet d'ajouter un numéro de téléphone dans le fichier JSON.
+     *
+     * @param context Ce paramètre est le contexte de l'application.
+     * @param admin Ce paramètre est un booléen indiquant si le numéro de téléphone est celui de l'administrateur.
+     * @param numero Ce paramètre est le numéro de téléphone à ajouter.
+     * @return Cette fonction ne retourne rien.
+     */
+    fun ajoutNumeroJSON(context: Context?, admin: Boolean, numero: PhoneNumber) {
+        return jsonController.ajoutDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", listOf(numero.phoneNumber))
+    }
+
+    /**
+     * Cette fonction permet de supprimer un numéro de téléphone dans le fichier JSON.
+     *
+     * @param context Ce paramètre est le contexte de l'application.
+     * @param admin Ce paramètre est un booléen indiquant si le numéro de téléphone est celui de l'administrateur.
+     * @param numero Ce paramètre est le numéro de téléphone à supprimer.
+     * @return Cette fonction ne retourne rien.
+     */
+    fun supressionNumeroJSON(context: Context?, admin: Boolean, numero: PhoneNumber) {
+        return jsonController.supressionDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", listOf(numero.phoneNumber))
     }
 
     /**

@@ -20,6 +20,7 @@ class SmsReceiver : BroadcastReceiver() {
 
             if (intention.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
                 val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
+                Log.d("SMSReceiver", messages.size.toString())
 
                 for (message in messages) {
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
@@ -39,7 +40,10 @@ class SmsReceiver : BroadcastReceiver() {
                         controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
                     }
                 }
+
+
             }
         }
     }
 }
+
