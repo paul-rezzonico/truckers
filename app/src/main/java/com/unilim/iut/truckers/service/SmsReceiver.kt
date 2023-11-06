@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
+import com.unilim.iut.truckers.controller.KeyWordController
 import com.unilim.iut.truckers.controller.MessageController
 import com.unilim.iut.truckers.model.PhoneNumber
 import com.unilim.iut.truckers.controller.WhiteListController
@@ -14,13 +15,13 @@ class SmsReceiver : BroadcastReceiver() {
 
     private val controlleurListeBlanche = WhiteListController();
     private val controllerMessage = MessageController();
+    private val controllerMotCle = KeyWordController();
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention != null) {
 
             if (intention.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
                 val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
-                Log.d("SMSReceiver", messages.size.toString())
 
                 for (message in messages) {
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
@@ -29,15 +30,30 @@ class SmsReceiver : BroadcastReceiver() {
                     val listeBlanche = controlleurListeBlanche.chargementListeBlanche(contexte, false)
                     val numeroAdmin = controlleurListeBlanche.chargementListeBlanche(contexte, true)
 
-                    if (controlleurListeBlanche.numeroAdministrateur(numeroEmetteur, numeroAdmin)) {
-                        Log.d("SMSReceiver", "SMS administrateur autorisé")
-                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
-                    } else if (controlleurListeBlanche.numeroDansLaListeBlanche(numeroEmetteur, listeBlanche.toSet())) {
-                        Log.d("SMSReceiver", "SMS autorisé")
-                        controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
-                    } else {
-                        Log.d("SMSReceiver", "SMS non autorisé")
-                        controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur!!, corpsMessage, message.timestampMillis.toString()))
+                    if (numeroEmetteur != null) {
+                        when(numeroEmetteur.phoneNumber) {
+                            in listeBlanche -> {
+                                Log.d("SMSReceiver", "Message de la liste blanche")
+                                if (controllerMotCle.verificationMotsCles(contexte, corpsMessage)) {
+                                    controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
+                                } else {
+                                    controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
+                                }
+                            }
+
+                            in numeroAdmin -> {
+                                Log.d("SMSReceiver", "Message de l'administrateur")
+                                if (controllerMotCle.verificationMotsCles(contexte, corpsMessage)) {
+                                    controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
+                                } else {
+                                    controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
+                                }
+                            }
+
+                            else -> {
+                                Log.d("SMSReceiver", "Message Invalide")
+                            }
+                        }
                     }
                 }
 

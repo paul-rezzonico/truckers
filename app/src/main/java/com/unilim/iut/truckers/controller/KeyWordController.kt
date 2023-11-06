@@ -2,6 +2,7 @@ package com.unilim.iut.truckers.controller
 
 import android.content.Context
 import android.util.Log
+import org.json.JSONObject
 
 class KeyWordController {
 
@@ -16,6 +17,36 @@ class KeyWordController {
     fun creationJSONMotCle(contexte: Context?) {
         jsonController.creationJSON(contexte, "MotsCles.json", "mots_cles")
         jsonController.ajoutDonneesJSON(contexte, "MotsCles.json", "mots_cles", listOf("RENDEZ-VOUS", "RDV", "LIVRAISON", "LIV", "URGENT", "URG", "INFORMATION", "INF"))
+    }
+
+    /**
+     * Cette fonction permet de charger le contenu d'un fichier JSON.
+     *
+     * @param context Ce paramètre est le contexte de l'application.
+     * @return Cette fonction retourne le contenu du fichier JSON.
+     */
+    fun chargementJson(context: Context?): JSONObject {
+        return jsonController.chargementJSON(context, "MotsCles.json")
+    }
+
+    /**
+     * Cette fonction permet de charger une liste de String mot-clés.
+     *
+     * @param context Ce paramètre est le contexte de l'application.
+     * @return Cette fonction retourne une liste de String mot-clés.
+     */
+    fun chargementMotsCles(context: Context?): MutableList<String> {
+        val jsonObject = chargementJson(context)
+        val motsCles = mutableListOf<String>()
+
+        val jsonArray = jsonObject.getJSONArray("mots_cles")
+
+        for (i in 0 until jsonArray.length()) {
+            val motCle = jsonArray.getString(i)
+            motsCles.add(motCle)
+        }
+
+        return motsCles
     }
 
     /**
@@ -59,13 +90,15 @@ class KeyWordController {
      * @return Cette fonction retourne un booléen.
      */
     fun verificationMotsCles(contexte: Context?, message: String): Boolean {
-        val motsCles = jsonController.chargementJSON(contexte, "MotsCles.json").getJSONArray("mots_cles")
-        for (i in 0 until motsCles.length()) {
-            if (message.contains(motsCles.getString(i))) {
+        val listMotsCles = chargementMotsCles(contexte)
+
+        for (motCle in listMotsCles) {
+            if (message.contains(motCle)) {
                 Log.d("SMSReceiver", "Message contenant un mot-clé")
                 return true
             }
         }
+
         Log.d("SMSReceiver", "Message ne contenant pas de mot-clé")
         return false
     }

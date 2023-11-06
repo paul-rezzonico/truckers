@@ -57,8 +57,6 @@ class WhiteListController {
                     whitelist.add(phoneNumber)
                 }
 
-                Log.d("SMSReceiver", "Liste Blanche chargée avec succès")
-
             } catch (e: ReadWhiteListException) {
                 Log.d("SMSReceiver", e.message)
             }

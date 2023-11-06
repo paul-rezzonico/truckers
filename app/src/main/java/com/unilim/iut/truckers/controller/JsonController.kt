@@ -173,7 +173,6 @@ class JsonController {
             json?.getJSONArray(nomObjetJson)
         }
         listeMessage?.put(messageSerialise)
-        Log.d("SMSReceiver", "listeMessage : $listeMessage")
 
         val objetJson = JSONObject()
         objetJson.put(nomObjetJson, listeMessage)
@@ -226,7 +225,6 @@ class JsonController {
                 listeMessage.remove(i)
             }
         }
-        Log.d("SMSReceiver", "listeMessage : $listeMessage")
 
         val objetJson = JSONObject()
         objetJson.put(nomObjetJson, listeMessage)
@@ -259,8 +257,6 @@ class JsonController {
             if (fluxEntree != null) {
                 val jsonStr = fluxEntree.bufferedReader().use { it.readText() }
                 objetJson = JSONObject(jsonStr)
-
-                Log.d("SMSReceiver", "JSON chargé avec succès : $cheminFichier")
             }
         } catch (e: ReadWhiteListException) {
             Log.d("SMSReceiver", e.message)
