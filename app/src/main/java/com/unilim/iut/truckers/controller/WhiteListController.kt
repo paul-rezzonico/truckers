@@ -18,8 +18,6 @@ class WhiteListController {
      */
     fun creationListeBlanche(contexte: Context?) {
         jsonController.creationJSON(contexte, "ListeBlanche.json", "liste_blanche")
-        ajoutNumeroJSON(contexte, true, PhoneNumber("0123456789"))
-        ajoutNumeroJSON(contexte, false, PhoneNumber("0666666666"))
     }
 
     /**
@@ -42,13 +40,13 @@ class WhiteListController {
         val jsonObject = chargementJson(context)
         val whitelist = mutableListOf<String>()
 
-        if (admin) {
+        if (admin && (jsonObject.has("numero_admin"))) {
             val jsonArray = jsonObject.getJSONArray("numero_admin")
             if (jsonArray.length() > 0) {
                 val numeroAdmin = jsonArray.getString(0)
                 whitelist.add(numeroAdmin)
             }
-        } else {
+        } else if (jsonObject.has("liste_blanche")) {
             try {
                 val jsonArray = jsonObject.getJSONArray("liste_blanche")
 
@@ -60,9 +58,8 @@ class WhiteListController {
             } catch (e: ReadWhiteListException) {
                 Log.d("SMSReceiver", e.message)
             }
-
-            return whitelist
         }
+
         return whitelist
     }
 
@@ -74,8 +71,8 @@ class WhiteListController {
      * @param numero Ce paramètre est le numéro de téléphone à ajouter.
      * @return Cette fonction ne retourne rien.
      */
-    fun ajoutNumeroJSON(context: Context?, admin: Boolean, numero: PhoneNumber) {
-        return jsonController.ajoutDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", listOf(numero.phoneNumber))
+    fun ajoutNumeroJSON(context: Context?, admin: Boolean, numero: List<PhoneNumber>) {
+        return jsonController.ajoutDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", numero.map { it.phoneNumber }.toList())
     }
 
     /**
