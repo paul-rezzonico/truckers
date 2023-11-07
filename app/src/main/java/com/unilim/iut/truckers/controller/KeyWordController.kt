@@ -40,19 +40,6 @@ class KeyWordController {
     }
 
     /**
-     * Cette fonction permet d'ajouter des mots-clés dans le fichier JSON contenant une liste de String mot-clés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param motsCles Ce paramètre est les mots-clés à ajouter dans le fichier JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun ajoutMotsCles(contexte: Context?, motsCles: List<String>) {
-        for (motCle in motsCles) {
-            jsonController.sauvegarder(contexte, "MotsCles.json", "mots_cles", motCle)
-        }
-    }
-
-    /**
      * Cette fonction permet de vérifier si un message contient un mot-clé.
      *
      * @param contexte Ce paramètre est le contexte de l'application.

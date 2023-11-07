@@ -7,8 +7,8 @@ import android.provider.Telephony
 import android.util.Log
 import com.unilim.iut.truckers.controller.KeyWordController
 import com.unilim.iut.truckers.controller.MessageController
-import com.unilim.iut.truckers.model.PhoneNumber
 import com.unilim.iut.truckers.controller.WhiteListController
+import com.unilim.iut.truckers.model.PhoneNumber
 import com.unilim.iut.truckers.model.Message
 
 class SmsReceiver : BroadcastReceiver() {

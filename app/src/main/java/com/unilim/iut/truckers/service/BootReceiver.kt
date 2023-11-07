@@ -3,11 +3,6 @@ package com.unilim.iut.truckers.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import com.unilim.iut.truckers.controller.DefaultController
-import com.unilim.iut.truckers.controller.JsonController
-import com.unilim.iut.truckers.controller.KeyWordController
-import com.unilim.iut.truckers.controller.WhiteListController
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(contexte: Context?, intention: Intent?) {
