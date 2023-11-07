@@ -2,10 +2,17 @@ package com.unilim.iut.truckers.controller
 
 import android.content.Context
 import com.unilim.iut.truckers.model.Message
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class MessageController {
 
     private val jsonController = JsonController();
+
+    fun creationNomFichierJSON(prefixe: String): String {
+        val dateDuJour = SimpleDateFormat("dd-M-yyyy").format(Date())
+        return "$prefixe" + "_" + "$dateDuJour.json"
+    }
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste d'objet Message.
@@ -14,7 +21,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonBonMessage(contexte: Context?) {
-        jsonController.creationJSON(contexte, "MessageValide.json", "messages")
+        jsonController.creationJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
     }
 
     /**
@@ -25,7 +32,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        jsonController.sauvegarder(contexte, "MessageValide.json", "messages", message)
+        jsonController.sauvegarder(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
     }
 
     /**
@@ -35,7 +42,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonBonMessage(contexte: Context?) {
-        jsonController.supressionJSON(contexte, "MessageValide.json")
+        jsonController.supressionJSON(contexte, creationNomFichierJSON("MessageValide"))
     }
 
     /**
@@ -45,7 +52,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        jsonController.creationJSON(contexte, "MessageInvalide.json", "messages")
+        jsonController.creationJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
     }
 
     /**
@@ -56,7 +63,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        jsonController.sauvegarder(contexte, "MessageInvalide.json", "messages", message)
+        jsonController.sauvegarder(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
     }
 
     /**
@@ -66,6 +73,6 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonMauvaisMessage(contexte: Context?) {
-        jsonController.supressionJSON(contexte, "MessageInvalide.json")
+        jsonController.supressionJSON(contexte, creationNomFichierJSON("MessageInvalide"))
     }
 }
