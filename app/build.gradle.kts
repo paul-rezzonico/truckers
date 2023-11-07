@@ -64,6 +64,7 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.strikt:strikt-core:0.34.0")
     testImplementation("io.mockk:mockk:1.4.1")
+    implementation("androidx.work:work-runtime:2.7.0")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
