@@ -62,7 +62,7 @@ class KeyWordController {
     fun verificationMotsCles(contexte: Context?, message: String): Boolean {
         val listMotsCles = chargementMotsCles(contexte)
 
-        for (motCle in listMotsCles) {
+        for (motCle in listMotsCles.toString()) {
             if (message.contains(motCle)) {
                 Log.d("TruckerService", "Message contenant un mot-clé")
                 return true

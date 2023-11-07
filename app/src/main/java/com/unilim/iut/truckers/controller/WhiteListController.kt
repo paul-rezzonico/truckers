@@ -73,7 +73,7 @@ class WhiteListController {
      */
     fun ajoutNumeroJSON(context: Context?, admin: Boolean, numero: List<PhoneNumber>) {
         for (num in numero) {
-            jsonController.sauvegarder(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", num.phoneNumber)
+            jsonController.sauvegarder(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", num)
         }
     }
 

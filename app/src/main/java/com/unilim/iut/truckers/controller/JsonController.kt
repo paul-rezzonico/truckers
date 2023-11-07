@@ -65,7 +65,7 @@ class JsonController : IFacadeDePersistence{
      */
     override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any) {
 
-        val donneesSerealises = jackson.writeValueAsString(donnees)
+        val donneesSerialises = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
@@ -81,7 +81,7 @@ class JsonController : IFacadeDePersistence{
         } else {
             json?.getJSONArray(champs)
         }
-        donneesJson?.put(donneesSerealises)
+        donneesJson?.put(donneesSerialises)
 
         json?.put(champs, donneesJson)
 
