@@ -3,8 +3,17 @@ package com.unilim.iut.truckers.service
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import com.unilim.iut.truckers.controller.DefaultController
+import com.unilim.iut.truckers.controller.JsonController
+import com.unilim.iut.truckers.controller.KeyWordController
+import com.unilim.iut.truckers.controller.WhiteListController
 
 class BootReceiver : BroadcastReceiver() {
+
+    private val controlleurMotsCles = KeyWordController()
+    private val controlleurListeBlanche = WhiteListController()
+    private val controllerDefaut = DefaultController()
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention?.action == Intent.ACTION_BOOT_COMPLETED) {
             val intentionDeLancement = contexte?.packageManager?.getLaunchIntentForPackage(contexte.packageName)

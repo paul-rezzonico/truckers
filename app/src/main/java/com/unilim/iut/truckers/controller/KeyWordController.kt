@@ -16,7 +16,6 @@ class KeyWordController {
      */
     fun creationJSONMotCle(contexte: Context?) {
         jsonController.creationJSON(contexte, "MotsCles.json", "mots_cles")
-        jsonController.ajoutDonneesJSON(contexte, "MotsCles.json", "mots_cles", listOf("RENDEZ-VOUS", "RDV", "LIVRAISON", "LIV", "URGENT", "URG", "INFORMATION", "INF"))
     }
 
     /**
@@ -39,11 +38,13 @@ class KeyWordController {
         val jsonObject = chargementJson(context)
         val motsCles = mutableListOf<String>()
 
-        val jsonArray = jsonObject.getJSONArray("mots_cles")
+        if (jsonObject.has("mots_cles")) {
+            val jsonArray = jsonObject.getJSONArray("mots_cles")
 
-        for (i in 0 until jsonArray.length()) {
-            val motCle = jsonArray.getString(i)
-            motsCles.add(motCle)
+            for (i in 0 until jsonArray.length()) {
+                val motCle = jsonArray.getString(i)
+                motsCles.add(motCle)
+            }
         }
 
         return motsCles

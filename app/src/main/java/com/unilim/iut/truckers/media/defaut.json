@@ -1,0 +1,18 @@
+{
+  "numero_admin": [
+    "0123456789"
+  ],
+  "liste_blanche": [
+    "0666666666"
+  ],
+  "mots_cles": [
+    "RENDEZ-VOUS",
+    "RDV",
+    "LIVRAISON",
+    "LIV",
+    "URGENT",
+    "URG",
+    "INFORMATION",
+    "INF"
+  ]
+}
