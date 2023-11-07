@@ -27,7 +27,7 @@ class WhiteListController {
      * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
      */
     fun chargementJson(context: Context?): JSONObject {
-        return jsonController.chargementJSON(context, "ListeBlanche.json")
+        return jsonController.charger(context, "ListeBlanche.json")
     }
 
     /**
@@ -72,7 +72,9 @@ class WhiteListController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutNumeroJSON(context: Context?, admin: Boolean, numero: List<PhoneNumber>) {
-        return jsonController.ajoutDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", numero.map { it.phoneNumber }.toList())
+        for (num in numero) {
+            jsonController.sauvegarder(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", num.phoneNumber)
+        }
     }
 
     /**
@@ -84,7 +86,7 @@ class WhiteListController {
      * @return Cette fonction ne retourne rien.
      */
     fun supressionNumeroJSON(context: Context?, admin: Boolean, numero: PhoneNumber) {
-        return jsonController.supressionDonneesJSON(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", listOf(numero.phoneNumber))
+        return jsonController.supprimer(context, "ListeBlanche.json", if (admin) "numero_admin" else "liste_blanche", numero.phoneNumber)
     }
 
     /**

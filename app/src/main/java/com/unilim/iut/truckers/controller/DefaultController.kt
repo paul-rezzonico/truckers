@@ -30,7 +30,7 @@ class DefaultController {
      * @return Cette fonction ne retourne rien.
      */
     fun chargementJson(context: Context?): String {
-        return controlleurJson.chargementJSON(context, "defaut.json").toString()
+        return controlleurJson.charger(context, "defaut.json").toString()
     }
 
     /**
@@ -40,7 +40,7 @@ class DefaultController {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementMotsClesDefaut(context: Context?): MutableList<String> {
-        val jsonObject = controlleurJson.chargementJSON(context, "defaut.json")
+        val jsonObject = controlleurJson.charger(context, "defaut.json")
         val liste = mutableListOf<String>()
 
         val jsonArray = jsonObject.getJSONArray("mots_cles")
@@ -60,7 +60,7 @@ class DefaultController {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementListeBlancheDefaut(context: Context?, nomTableauJson: String): MutableList<PhoneNumber> {
-        val jsonObject = controlleurJson.chargementJSON(context, "defaut.json")
+        val jsonObject = controlleurJson.charger(context, "defaut.json")
         val liste = mutableListOf<PhoneNumber>()
 
         val jsonArray = jsonObject.getJSONArray(nomTableauJson)

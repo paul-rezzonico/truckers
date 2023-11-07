@@ -23,6 +23,8 @@ class JsonController : IFacadeDePersistence{
             Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
             return
         }
+        Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
+        Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
 
         val objetJson = JSONObject()
         objetJson.put(champs, null)
@@ -34,7 +36,6 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
 
-            Log.d("SMSReceiver", "Fichier JSON sauvegardé avec succès : $cheminFichier")
         } catch (e: WriteWhiteListException) {
             Log.d("SMSReceiver", e.message)
         }
@@ -58,20 +59,18 @@ class JsonController : IFacadeDePersistence{
      * Cette fonction permet d'ajouter un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
      *
      * @param contexte Ce paramètre est le contexte de l'application.
-     * @param message Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
+     * @param donnees Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
      * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, message: Any) {
+    override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any) {
 
-        val messageSerialise = jackson.writeValueAsString(message)
-        Log.d("SMSReceiver", "messageSerialise : $messageSerialise")
+        val donneesSerealises = jackson.writeValueAsString(donnees)
+        Log.d("SMSReceiver", "donnees : $donneesSerealises")
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
             creationJSON(contexte, cheminFichier, champs)
             return
         }
@@ -79,15 +78,15 @@ class JsonController : IFacadeDePersistence{
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val listeMessage : JSONArray? = if (json.toString() == "{}") {
+        val donneesJson : JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
             json?.getJSONArray(champs)
         }
-        listeMessage?.put(messageSerialise)
+        donneesJson?.put(donneesSerealises)
 
         val objetJson = JSONObject()
-        objetJson.put(champs, listeMessage)
+        objetJson.put(champs, donneesJson)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -96,7 +95,6 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
 
-            Log.d("SMSReceiver", "Modification Fichier JSON sauvegardé avec succès : $cheminFichier")
         } catch (e: WriteWhiteListException) {
             Log.d("SMSReceiver", e.message)
         }
@@ -117,13 +115,11 @@ class JsonController : IFacadeDePersistence{
         champs: String,
         donnees: Any
     ) {
-        val jackson = ObjectMapper().registerModule(KotlinModule())
-        val messageSerialise = jackson.writeValueAsString(donnees)
+        val donneesSerealises = jackson.writeValueAsString(donnees)
+        Log.d("SMSReceiver", "donnees : $donneesSerealises")
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
             creationJSON(contexte, cheminFichier, champs)
             return
         }
@@ -131,20 +127,20 @@ class JsonController : IFacadeDePersistence{
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val listeMessage : JSONArray? = if (json.toString() == "{}") {
+        val liste : JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
             json?.getJSONArray(champs)
         }
 
-        for (i in 0 until listeMessage!!.length()) {
-            if (listeMessage[i] == messageSerialise) {
-                listeMessage.remove(i)
+        for (i in 0 until liste!!.length()) {
+            if (liste[i] == donneesSerealises) {
+                liste.remove(i)
             }
         }
 
         val objetJson = JSONObject()
-        objetJson.put(champs, listeMessage)
+        objetJson.put(champs, liste)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -153,7 +149,6 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
 
-            Log.d("SMSReceiver", "Modification Fichier JSON sauvegardé avec succès : $cheminFichier")
         } catch (e: WriteWhiteListException) {
             Log.d("SMSReceiver", e.message)
         }
