@@ -1,15 +1,7 @@
 package com.unilim.iut.truckers.controller
 
 import android.content.Context
-import android.util.Log
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.unilim.iut.truckers.model.Message
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 
 class MessageController {
 
@@ -33,7 +25,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        jsonController.ajoutModelJSON(contexte, "MessageValide.json", "messages", message)
+        jsonController.sauvegarder(contexte, "MessageValide.json", "messages", message)
     }
 
     /**
@@ -64,7 +56,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        jsonController.ajoutModelJSON(contexte, "MessageInvalide.json", "messages", message)
+        jsonController.sauvegarder(contexte, "MessageInvalide.json", "messages", message)
     }
 
     /**

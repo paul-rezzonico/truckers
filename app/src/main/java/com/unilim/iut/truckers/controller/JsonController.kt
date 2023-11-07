@@ -6,24 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.unilim.iut.truckers.exception.ReadWhiteListException
 import com.unilim.iut.truckers.exception.WriteWhiteListException
-import com.unilim.iut.truckers.model.Message
+import com.unilim.iut.truckers.facade.IFacadeDePersistence
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class JsonController {
+class JsonController : IFacadeDePersistence{
+    private val jackson = ObjectMapper().registerModule(KotlinModule())
 
-    /**
-     * Cette fonction permet de créer un fichier JSON en fonction du chemin du fichier et de l'objetJson.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param nomObjetJson Ce paramètre est le nom de l'objet JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun creationJSON(contexte: Context?, cheminFichier: String, nomObjetJson: String) {
+
+    fun creationJSON(contexte: Context?, cheminFichier: String, champs: String) {
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
             Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
@@ -31,7 +25,7 @@ class JsonController {
         }
 
         val objetJson = JSONObject()
-        objetJson.put(nomObjetJson, null)
+        objetJson.put(champs, null)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -61,98 +55,16 @@ class JsonController {
     }
 
     /**
-     * Cette fonction permet d'ajouter des données dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et des données.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param donnees Ce paramètre est les données à ajouter dans le fichier JSON.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param nomObjetJson Ce paramètre est le nom de l'objet JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun ajoutDonneesJSON(contexte: Context?, cheminFichier: String, nomObjetJson: String, donnees: List<String?>) {
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJSON(contexte, cheminFichier, nomObjetJson)
-            return
-        }
-
-        try {
-            val contenuJson = fichier.readText()
-            val json = JSONObject(contenuJson)
-
-            val jsonArray = JSONArray()
-            for (donnee in donnees) {
-                donnee?.let { jsonArray.put(it) }
-            }
-
-            json.put(nomObjetJson, jsonArray)
-
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(json.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Modification Fichier JSON sauvegardé avec succès : $cheminFichier")
-        } catch (e: ReadWhiteListException) {
-            Log.d("SMSReceiver", e.message)
-        }
-    }
-
-    /**
-     * Cette fonction permet de supprimer des données dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et des données.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param donnees Ce paramètre est les données à supprimer dans le fichier JSON.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param nomObjetJson Ce paramètre est le nom de l'objet JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun supressionDonneesJSON(contexte: Context?, cheminFichier: String, nomObjetJson: String, donnees: List<String?>) {
-        val fichier = File(contexte?.filesDir, cheminFichier)
-        if (!fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-            Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJSON(contexte, cheminFichier, nomObjetJson)
-            return
-        }
-
-        val objetJson = JSONObject()
-        val valeurs = objetJson[nomObjetJson] as JSONArray
-        for (donnee in donnees) {
-            for (i in 0 until valeurs.length()) {
-                if (valeurs[i] == donnee) {
-                    valeurs.remove(i)
-                }
-            }
-        }
-
-        try {
-            val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
-
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
-            fluxSortie?.close()
-
-            Log.d("SMSReceiver", "Modification Fichier JSON sauvegardé avec succès : $cheminFichier")
-        } catch (e: WriteWhiteListException) {
-            Log.d("SMSReceiver", e.message)
-        }
-    }
-
-    /**
      * Cette fonction permet d'ajouter un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
      *
      * @param contexte Ce paramètre est le contexte de l'application.
      * @param message Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param nomObjetJson Ce paramètre est le nom de l'objet JSON.
+     * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    fun ajoutModelJSON(contexte: Context?, cheminFichier: String, nomObjetJson: String, message: Message) {
-        val jackson = ObjectMapper().registerModule(KotlinModule())
+    override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, message: Any) {
+
         val messageSerialise = jackson.writeValueAsString(message)
         Log.d("SMSReceiver", "messageSerialise : $messageSerialise")
 
@@ -160,7 +72,7 @@ class JsonController {
         if (!fichier.exists()) {
             Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
             Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJSON(contexte, cheminFichier, nomObjetJson)
+            creationJSON(contexte, cheminFichier, champs)
             return
         }
 
@@ -170,12 +82,12 @@ class JsonController {
         val listeMessage : JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
-            json?.getJSONArray(nomObjetJson)
+            json?.getJSONArray(champs)
         }
         listeMessage?.put(messageSerialise)
 
         val objetJson = JSONObject()
-        objetJson.put(nomObjetJson, listeMessage)
+        objetJson.put(champs, listeMessage)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -194,20 +106,25 @@ class JsonController {
      * Cette fonction permet de supprimer un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
      *
      * @param contexte Ce paramètre est le contexte de l'application.
-     * @param message Ce paramètre est l'objet Message à supprimer dans le fichier JSON.
+     * @param donnees Ce paramètre est l'objet Message à supprimer dans le fichier JSON.
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param nomObjetJson Ce paramètre est le nom de l'objet JSON.
+     * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    fun supressionModelJSON(contexte: Context?, cheminFichier: String, nomObjetJson: String, message: Message) {
+    override fun supprimer(
+        contexte: Context?,
+        cheminFichier: String,
+        champs: String,
+        donnees: Any
+    ) {
         val jackson = ObjectMapper().registerModule(KotlinModule())
-        val messageSerialise = jackson.writeValueAsString(message)
+        val messageSerialise = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
             Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
             Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
-            creationJSON(contexte, cheminFichier, nomObjetJson)
+            creationJSON(contexte, cheminFichier, champs)
             return
         }
 
@@ -217,7 +134,7 @@ class JsonController {
         val listeMessage : JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
-            json?.getJSONArray(nomObjetJson)
+            json?.getJSONArray(champs)
         }
 
         for (i in 0 until listeMessage!!.length()) {
@@ -227,7 +144,7 @@ class JsonController {
         }
 
         val objetJson = JSONObject()
-        objetJson.put(nomObjetJson, listeMessage)
+        objetJson.put(champs, listeMessage)
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -249,7 +166,7 @@ class JsonController {
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
      * @return Cette fonction retourne le contenu du fichier JSON.
      */
-    fun chargementJSON(context: Context?, cheminFichier: String): JSONObject {
+    override fun charger(context: Context?, cheminFichier: String): JSONObject {
         var objetJson = JSONObject()
 
         try {
