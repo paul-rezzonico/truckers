@@ -38,14 +38,14 @@ class MainActivity : Activity() {
         controlleurKeyWord.creationJSONMotCle(this)
 
         if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
-            Log.d("SMSReceiver", "Liste blanche et mots clés déjà présents")
+            Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
             val workManager = WorkManager.getInstance(this)
             val smsWorkerRequest = PeriodicWorkRequest.Builder(SmsReceiverService::class.java, 15, TimeUnit.MINUTES)
                 .build()
 
             workManager.enqueue(smsWorkerRequest)
         } else if (controlleurDefaut.verificationDefaultJson(this)) {
-            Log.d("SMSReceiver", "Liste blanche et mots clés par défaut")
+            Log.d("TruckerService", "Liste blanche et mots clés par défaut")
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
             val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
             val numeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
@@ -60,7 +60,7 @@ class MainActivity : Activity() {
 
             workManager.enqueue(smsWorkerRequest)
         } else {
-            Log.d("SMSReceiver", "Le fichier JSON par défaut n'existe pas")
+            Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
         }
 
         finish()

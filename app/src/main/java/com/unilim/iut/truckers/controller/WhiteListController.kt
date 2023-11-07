@@ -56,7 +56,7 @@ class WhiteListController {
                 }
 
             } catch (e: ReadWhiteListException) {
-                Log.d("SMSReceiver", e.message)
+                Log.d("TruckerService", e.message)
             }
         }
 

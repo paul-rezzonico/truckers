@@ -33,7 +33,7 @@ class SmsReceiver : BroadcastReceiver() {
                     if (numeroEmetteur != null) {
                         when(numeroEmetteur.phoneNumber) {
                             in listeBlanche -> {
-                                Log.d("SMSReceiver", "Message de la liste blanche")
+                                Log.d("TruckerService", "Message de la liste blanche")
                                 if (controllerMotCle.verificationMotsCles(contexte, corpsMessage)) {
                                     controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                 } else {
@@ -42,7 +42,7 @@ class SmsReceiver : BroadcastReceiver() {
                             }
 
                             in numeroAdmin -> {
-                                Log.d("SMSReceiver", "Message de l'administrateur")
+                                Log.d("TruckerService", "Message de l'administrateur")
                                 if (controllerMotCle.verificationMotsCles(contexte, corpsMessage)) {
                                     controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                 } else {
@@ -51,7 +51,7 @@ class SmsReceiver : BroadcastReceiver() {
                             }
 
                             else -> {
-                                Log.d("SMSReceiver", "Message Invalide")
+                                Log.d("TruckerService", "Message Invalide")
                             }
                         }
                     }

@@ -14,7 +14,7 @@ class SmsReceiverService(context: Context, workerParams: WorkerParameters) : Wor
     override fun doWork(): Result {
         val filtreIntention = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
         applicationContext.registerReceiver(smsReceiver, filtreIntention)
-        Log.d("SMSReceiverService", "Service actif")
+        Log.d("TruckerService", "Service actif")
 
         return Result.success()
     }

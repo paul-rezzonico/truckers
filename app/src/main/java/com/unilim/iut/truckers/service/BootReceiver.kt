@@ -10,10 +10,6 @@ import com.unilim.iut.truckers.controller.KeyWordController
 import com.unilim.iut.truckers.controller.WhiteListController
 
 class BootReceiver : BroadcastReceiver() {
-
-    private val controlleurMotsCles = KeyWordController()
-    private val controlleurListeBlanche = WhiteListController()
-    private val controllerDefaut = DefaultController()
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention?.action == Intent.ACTION_BOOT_COMPLETED) {
             val intentionDeLancement = contexte?.packageManager?.getLaunchIntentForPackage(contexte.packageName)

@@ -64,12 +64,12 @@ class KeyWordController {
 
         for (motCle in listMotsCles) {
             if (message.contains(motCle)) {
-                Log.d("SMSReceiver", "Message contenant un mot-clé")
+                Log.d("TruckerService", "Message contenant un mot-clé")
                 return true
             }
         }
 
-        Log.d("SMSReceiver", "Message ne contenant pas de mot-clé")
+        Log.d("TruckerService", "Message ne contenant pas de mot-clé")
         return false
     }
 }

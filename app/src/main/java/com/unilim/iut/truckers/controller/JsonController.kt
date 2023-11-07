@@ -20,11 +20,10 @@ class JsonController : IFacadeDePersistence{
     fun creationJSON(contexte: Context?, cheminFichier: String, champs: String) {
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
-            Log.d("SMSReceiver", "Le fichier JSON existe déjà : $cheminFichier")
+            Log.d("TruckerService", "Le fichier JSON existe déjà : $cheminFichier")
             return
         }
-        Log.d("SMSReceiver", "Le fichier JSON n'existe pas : $cheminFichier")
-        Log.d("SMSReceiver", "Création du fichier JSON : $cheminFichier")
+        Log.d("TruckerService", "Création du fichier JSON : $cheminFichier")
 
         val objetJson = JSONObject()
         objetJson.put(champs, null)
@@ -37,7 +36,7 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.close()
 
         } catch (e: WriteWhiteListException) {
-            Log.d("SMSReceiver", e.message)
+            Log.d("TruckerService", e.message)
         }
     }
 
@@ -51,7 +50,7 @@ class JsonController : IFacadeDePersistence{
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
             fichier.delete()
-            Log.d("SMSReceiver", "Le fichier JSON a été supprimé : $cheminFichier")
+            Log.d("TruckerService", "Le fichier JSON a été supprimé : $cheminFichier")
         }
     }
 
@@ -67,7 +66,6 @@ class JsonController : IFacadeDePersistence{
     override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any) {
 
         val donneesSerealises = jackson.writeValueAsString(donnees)
-        Log.d("SMSReceiver", "donnees : $donneesSerealises")
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
@@ -78,25 +76,24 @@ class JsonController : IFacadeDePersistence{
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val donneesJson : JSONArray? = if (json.toString() == "{}") {
+        val donneesJson : JSONArray? = if (json.toString() == "{}" || json?.has(champs) == false) {
             JSONArray()
         } else {
             json?.getJSONArray(champs)
         }
         donneesJson?.put(donneesSerealises)
 
-        val objetJson = JSONObject()
-        objetJson.put(champs, donneesJson)
+        json?.put(champs, donneesJson)
 
         try {
             val fluxSortie: FileOutputStream? =
                 contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
 
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
+            fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
 
         } catch (e: WriteWhiteListException) {
-            Log.d("SMSReceiver", e.message)
+            Log.d("TruckerService", e.message)
         }
     }
 
@@ -116,7 +113,7 @@ class JsonController : IFacadeDePersistence{
         donnees: Any
     ) {
         val donneesSerealises = jackson.writeValueAsString(donnees)
-        Log.d("SMSReceiver", "donnees : $donneesSerealises")
+        Log.d("TruckerService", "donnees : $donneesSerealises")
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
@@ -150,7 +147,7 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.close()
 
         } catch (e: WriteWhiteListException) {
-            Log.d("SMSReceiver", e.message)
+            Log.d("TruckerService", e.message)
         }
     }
 
@@ -171,7 +168,7 @@ class JsonController : IFacadeDePersistence{
                 objetJson = JSONObject(jsonStr)
             }
         } catch (e: ReadWhiteListException) {
-            Log.d("SMSReceiver", e.message)
+            Log.d("TruckerService", e.message)
         }
 
         return objetJson
