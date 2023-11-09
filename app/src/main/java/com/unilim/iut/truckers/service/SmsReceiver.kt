@@ -24,6 +24,7 @@ class SmsReceiver : BroadcastReceiver() {
                 val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
 
                 for (message in messages) {
+                    Log.d("TruckerService", "--------------------------------------")
                     val numeroEmetteur = message.originatingAddress?.let { PhoneNumber(it) }
                     val corpsMessage = message.messageBody
 

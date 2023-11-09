@@ -63,14 +63,14 @@ class JsonController : IFacadeDePersistence{
      * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any) {
+    override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
 
         val donneesSerialises = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
             creationJSON(contexte, cheminFichier, champs)
-            return
+            return false
         }
 
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
@@ -85,7 +85,7 @@ class JsonController : IFacadeDePersistence{
         if (donneesJson != null) {
             for (i in 0 until donneesJson.length()) {
                 if (donneesJson.getString(i) == donneesSerialises) {
-                    return
+                    return false
                 }
             }
         }
@@ -99,9 +99,10 @@ class JsonController : IFacadeDePersistence{
 
             fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
-
+            return true
         } catch (e: WriteWhiteListException) {
             Log.d("TruckerService", e.message)
+            return false
         }
     }
 

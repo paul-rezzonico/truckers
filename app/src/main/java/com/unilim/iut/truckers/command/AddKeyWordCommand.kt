@@ -9,10 +9,14 @@ class AddKeyWordCommand(
 ) : Command() {
 
     override fun executer(): Boolean {
-        donnee?.let {
+        val effectue = donnee?.let {
             jsonController.sauvegarder(context, "MotsCles.json", "mots_cles",
                 it
             )
+        }
+        if (effectue == false) {
+            Log.d("TruckerService", "Ajout d'un mot clé impossible car déjà présent: $donnee")
+            return false
         }
         Log.d("TruckerService", "Ajout d'un mot clé: $donnee")
         return true

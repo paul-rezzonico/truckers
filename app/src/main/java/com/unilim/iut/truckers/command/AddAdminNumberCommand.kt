@@ -10,10 +10,14 @@ class AddAdminNumberCommand(
 ): Command() {
 
     override fun executer(): Boolean {
-        donnee?.let {
+        val effectue = donnee?.let {
             jsonController.sauvegarder(context, "ListeBlanche.json", "numero_admin",
                 it
             )
+        }
+        if (effectue == false) {
+            Log.d("TruckerService", "Ajout d'un numéro admin dans la liste blanche impossible car déjà présent: $donnee")
+            return false
         }
         Log.d("TruckerService", "Ajout d'un numéro admin dans la liste blanche : $donnee")
         return true
