@@ -59,4 +59,23 @@ class KeyWordController {
         Log.d("TruckerService", "Message ne contenant pas de mot-clé")
         return false
     }
+
+    /**
+     * Cette fonction permet de vérifier si un message contient un mot-clé.
+     *
+     * @param contexte Ce paramètre est le contexte de l'application.
+     * @param message Ce paramètre est le message à vérifier.
+     * @return Cette fonction retourne un booléen.
+     */
+    fun verificationMotsClesAdmin(contexte: Context?, message: String): Boolean {
+        val motCleAdmin = "CONFIG"
+
+        if (message.contains(motCleAdmin)) {
+            Log.d("TruckerService", "Message contenant un mot-clé Admin")
+            return true
+        }
+
+        Log.d("TruckerService", "Message ne contenant pas de mot-clé Admin")
+        return false
+    }
 }

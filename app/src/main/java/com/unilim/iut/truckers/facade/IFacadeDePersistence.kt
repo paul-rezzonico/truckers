@@ -7,5 +7,5 @@ interface IFacadeDePersistence {
 
     fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any)
     fun charger(context: Context?, cheminFichier: String) : Any
-    fun supprimer(contexte: Context?, cheminFichier: String, champs: String, donnees: Any)
+    fun supprimer(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
 }

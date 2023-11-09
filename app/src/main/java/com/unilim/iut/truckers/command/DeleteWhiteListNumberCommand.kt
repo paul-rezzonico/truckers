@@ -1,10 +1,11 @@
 package com.unilim.iut.truckers.command
 
 import android.content.Context
+import android.util.Log
 import com.unilim.iut.truckers.controller.JsonController
 
 class DeleteWhiteListNumberCommand(
-    override var context: Context,
+    override var context: Context?,
     override var donnee: Any?
 ) : Command() {
 
@@ -15,6 +16,7 @@ class DeleteWhiteListNumberCommand(
                 it
             )
         }
+        Log.d("TruckerService", "Suppression d'un numéro dans la liste blanche: $donnee")
         return true
     }
 }

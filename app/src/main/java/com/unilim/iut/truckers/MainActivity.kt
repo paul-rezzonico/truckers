@@ -1,6 +1,7 @@
 package com.unilim.iut.truckers
 
 import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import com.unilim.iut.truckers.command.AddKeyWordCommand
 import com.unilim.iut.truckers.command.AddWhiteListNumberCommand
 import com.unilim.iut.truckers.command.Command
 import com.unilim.iut.truckers.command.CommandHistory
+import com.unilim.iut.truckers.controller.CommandController
 import com.unilim.iut.truckers.controller.DefaultController
 import com.unilim.iut.truckers.controller.KeyWordController
 import com.unilim.iut.truckers.controller.MessageController
@@ -22,7 +24,11 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
 
-    val history = CommandHistory()
+    companion object {
+        val history: CommandHistory = CommandHistory()
+    }
+
+    private val controlleurCommande = CommandController()
     private val controlleurListeBlanche = WhiteListController()
     private val controlleurMessage = MessageController()
     private val controlleurKeyWord = KeyWordController()
@@ -42,6 +48,10 @@ class MainActivity : Activity() {
         controlleurMessage.creationJsonMauvaisMessage(this)
         controlleurMessage.creationJsonBonMessage(this)
         controlleurKeyWord.creationJSONMotCle(this)
+        applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("is_receiver_registered", false)
+            .apply()
 
         if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
@@ -54,12 +64,16 @@ class MainActivity : Activity() {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
             val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
-            val numeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
+            val listeNumeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
 
-            executerCommande(AddAdminNumberCommand(this, numeroAdmin))
-            executerCommande(AddWhiteListNumberCommand(this, listeBlanche))
+            for (numero in listeBlanche) {
+                controlleurCommande.executerCommande(AddWhiteListNumberCommand(this, numero))
+            }
+            for (numeroAdmin in listeNumeroAdmin) {
+                controlleurCommande.executerCommande(AddAdminNumberCommand(this, numeroAdmin))
+            }
             for (motcle in listeMotsCles) {
-                executerCommande(AddKeyWordCommand(this, motcle))
+                controlleurCommande.executerCommande(AddKeyWordCommand(this, motcle))
             }
 
             val workManager = WorkManager.getInstance(this)
@@ -76,16 +90,5 @@ class MainActivity : Activity() {
 
     override fun onDestroy() {
         super.onDestroy()
-    }
-
-    /**
-     * Cette fonction permet d'exécuter une commande.
-     *
-     * @param command Ce paramètre est la commande à exécuter.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun executerCommande(command: Command) {
-        command.executer()
-        history.ajouter(command)
     }
 }

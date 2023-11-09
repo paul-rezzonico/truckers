@@ -12,10 +12,25 @@ class SmsReceiverService(context: Context, workerParams: WorkerParameters) : Wor
     private val smsReceiver = SmsReceiver()
 
     override fun doWork(): Result {
-        val filtreIntention = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
-        applicationContext.registerReceiver(smsReceiver, filtreIntention)
-        Log.d("TruckerService", "Service actif")
+        val sharedPreferences = applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
+        val isReceiverRegistered = sharedPreferences.getBoolean("is_receiver_registered", false)
+
+        if (!isReceiverRegistered) {
+            val filter = IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)
+            applicationContext.registerReceiver(smsReceiver, filter)
+
+            sharedPreferences.edit().putBoolean("is_receiver_registered", true).apply()
+            Log.d("TruckerService", "Service actif")
+        }
 
         return Result.success()
+    }
+
+    override fun onStopped() {
+        super.onStopped()
+        applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean("is_receiver_registered", false)
+            .apply()
     }
 }

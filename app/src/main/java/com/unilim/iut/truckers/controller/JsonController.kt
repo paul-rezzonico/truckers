@@ -81,8 +81,16 @@ class JsonController : IFacadeDePersistence{
         } else {
             json?.getJSONArray(champs)
         }
-        donneesJson?.put(donneesSerialises)
 
+        if (donneesJson != null) {
+            for (i in 0 until donneesJson.length()) {
+                if (donneesJson.getString(i) == donneesSerialises) {
+                    return
+                }
+            }
+        }
+
+        donneesJson?.put(donneesSerialises)
         json?.put(champs, donneesJson)
 
         try {
@@ -106,19 +114,13 @@ class JsonController : IFacadeDePersistence{
      * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    override fun supprimer(
-        contexte: Context?,
-        cheminFichier: String,
-        champs: String,
-        donnees: Any
-    ) {
+    override fun supprimer(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
         val donneesSerealises = jackson.writeValueAsString(donnees)
-        Log.d("TruckerService", "donnees : $donneesSerealises")
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
             creationJSON(contexte, cheminFichier, champs)
-            return
+            return false
         }
 
         val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
@@ -130,24 +132,36 @@ class JsonController : IFacadeDePersistence{
             json?.getJSONArray(champs)
         }
 
-        for (i in 0 until liste!!.length()) {
-            if (liste[i] == donneesSerealises) {
-                liste.remove(i)
+        if (champs != "numero_admin") {
+            for (i in 0 until liste!!.length()) {
+                Log.d("TruckerService", liste.getString(i))
+                if (liste.getString(i) == donneesSerealises) {
+                    liste.remove(i)
+                }
             }
+        } else if (liste?.length()!! > 1) {
+            for (i in 0 until liste.length()) {
+                Log.d("TruckerService", liste.getString(i))
+                if (liste.getString(i) == donneesSerealises) {
+                    liste.remove(i)
+                }
+            }
+        } else {
+            return false
         }
 
-        val objetJson = JSONObject()
-        objetJson.put(champs, liste)
+        json?.put(champs, liste)
 
         try {
             val fluxSortie: FileOutputStream? =
                 contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
 
-            fluxSortie?.write(objetJson.toString(4).toByteArray())
+            fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
-
+            return true
         } catch (e: WriteWhiteListException) {
             Log.d("TruckerService", e.message)
+            return false
         }
     }
 

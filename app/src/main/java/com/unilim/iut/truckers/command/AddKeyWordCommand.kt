@@ -1,9 +1,10 @@
 package com.unilim.iut.truckers.command
 
 import android.content.Context
+import android.util.Log
 
 class AddKeyWordCommand(
-    override var context: Context,
+    override var context: Context?,
     override var donnee: Any?
 ) : Command() {
 
@@ -13,6 +14,7 @@ class AddKeyWordCommand(
                 it
             )
         }
+        Log.d("TruckerService", "Ajout d'un mot clé: $donnee")
         return true
     }
 }

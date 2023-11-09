@@ -43,8 +43,9 @@ class SmsReceiver : BroadcastReceiver() {
 
                             in numeroAdmin.toString() -> {
                                 Log.d("TruckerService", "Message de l'administrateur")
-                                if (controllerMotCle.verificationMotsCles(contexte, corpsMessage)) {
+                                if (controllerMotCle.verificationMotsClesAdmin(contexte, corpsMessage)) {
                                     controllerMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
+                                    controllerMessage.actionMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                 } else {
                                     controllerMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                 }

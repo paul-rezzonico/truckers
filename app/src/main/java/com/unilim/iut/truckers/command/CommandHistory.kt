@@ -24,4 +24,8 @@ class CommandHistory {
     fun EstVide(): Boolean {
         return historique.isEmpty()
     }
+
+    fun historique(): Stack<Command> {
+        return historique
+    }
 }

@@ -5,7 +5,7 @@ import com.unilim.iut.truckers.controller.JsonController
 
 abstract class Command() {
 
-    abstract var context: Context
+    abstract var context: Context?
     abstract var donnee: Any?
 
     companion object {
