@@ -1,6 +1,6 @@
 package com.unilim.iut.truckers.exception
 
-class WriteWhiteListException : Exception() {
+class EcritureListeBlancheException : Exception() {
     override val message: String
         get() = "Erreur lors de l'écriture du fichier JSON WhiteList : "
 }

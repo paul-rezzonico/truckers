@@ -1,6 +1,6 @@
-package com.unilim.iut.truckers.model
+package com.unilim.iut.truckers.modele
 
-data class PhoneNumber(val phoneNumber: String) {
+data class NumeroTelephone(val phoneNumber: String) {
     init {
         require(isValidFrenchPhoneNumberFormat(phoneNumber)) {
             "Le numéro de téléphone doit être au format international français"

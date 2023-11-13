@@ -1,11 +1,11 @@
-package com.unilim.iut.truckers.controller
+package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.util.Log
 
-class KeyWordController {
+class MotCleControleur {
 
-    private val jsonController = JsonController();
+    private val jsonControleur = JsonControleur();
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de String mot-clés.
@@ -14,7 +14,7 @@ class KeyWordController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJSONMotCle(contexte: Context?) {
-        jsonController.creationJSON(contexte, "MotsCles.json", "mots_cles")
+        jsonControleur.creationJSON(contexte, "MotsCles.json", "mots_cles")
     }
 
     /**
@@ -24,7 +24,7 @@ class KeyWordController {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementMotsCles(context: Context?): MutableList<String> {
-        val jsonObject = jsonController.charger(context, "MotsCles.json")
+        val jsonObject = jsonControleur.charger(context, "MotsCles.json")
         val motsCles = mutableListOf<String>()
 
         if (jsonObject.has("mots_cles")) {
@@ -47,9 +47,9 @@ class KeyWordController {
      * @return Cette fonction retourne un booléen.
      */
     fun verificationMotsCles(contexte: Context?, message: String): Boolean {
-        val listMotsCles = chargementMotsCles(contexte)
+        val listeMotsCles = chargementMotsCles(contexte)
 
-        for (motCle in listMotsCles.toString()) {
+        for (motCle in listeMotsCles.toString()) {
             if (message.contains(motCle)) {
                 Log.d("TruckerService", "Message contenant un mot-clé")
                 return true

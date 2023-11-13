@@ -1,14 +1,13 @@
-package com.unilim.iut.truckers.controller
+package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.util.Log
-import com.unilim.iut.truckers.exception.ReadWhiteListException
-import com.unilim.iut.truckers.model.PhoneNumber
+import com.unilim.iut.truckers.exception.LectureListeBlancheException
 import org.json.JSONObject
 
-class WhiteListController {
+class ListeBlancheControleur {
 
-    private val jsonController = JsonController()
+    private val jsonControleur = JsonControleur()
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de numéros de téléphone.
@@ -17,7 +16,7 @@ class WhiteListController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationListeBlanche(contexte: Context?) {
-        jsonController.creationJSON(contexte, "ListeBlanche.json", "liste_blanche")
+        jsonControleur.creationJSON(contexte, "ListeBlanche.json", "liste_blanche")
     }
 
     /**
@@ -27,7 +26,7 @@ class WhiteListController {
      * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
      */
     fun chargementJson(context: Context?): JSONObject {
-        return jsonController.charger(context, "ListeBlanche.json")
+        return jsonControleur.charger(context, "ListeBlanche.json")
     }
 
     /**
@@ -37,29 +36,29 @@ class WhiteListController {
      * @return Cette fonction retourne une liste de numéros de téléphone.
      */
     fun chargementListeBlanche(context: Context?, admin: Boolean): MutableList<String> {
-        val jsonObject = chargementJson(context)
-        val whitelist = mutableListOf<String>()
+        val objetJson = chargementJson(context)
+        val listeBlanche = mutableListOf<String>()
 
-        if (admin && (jsonObject.has("numero_admin"))) {
-            val jsonArray = jsonObject.getJSONArray("numero_admin")
+        if (admin && (objetJson.has("numero_admin"))) {
+            val jsonArray = objetJson.getJSONArray("numero_admin")
             if (jsonArray.length() > 0) {
                 val numeroAdmin = jsonArray.getString(0)
-                whitelist.add(numeroAdmin)
+                listeBlanche.add(numeroAdmin)
             }
-        } else if (jsonObject.has("liste_blanche")) {
+        } else if (objetJson.has("liste_blanche")) {
             try {
-                val jsonArray = jsonObject.getJSONArray("liste_blanche")
+                val jsonArray = objetJson.getJSONArray("liste_blanche")
 
                 for (i in 0 until jsonArray.length()) {
                     val phoneNumber = jsonArray.getString(i)
-                    whitelist.add(phoneNumber)
+                    listeBlanche.add(phoneNumber)
                 }
 
-            } catch (e: ReadWhiteListException) {
+            } catch (e: LectureListeBlancheException) {
                 Log.d("TruckerService", e.message)
             }
         }
 
-        return whitelist
+        return listeBlanche
     }
 }

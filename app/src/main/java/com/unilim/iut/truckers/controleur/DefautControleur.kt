@@ -1,22 +1,22 @@
-package com.unilim.iut.truckers.controller
+package com.unilim.iut.truckers.controleur
 
 import android.content.Context
-import com.unilim.iut.truckers.model.PhoneNumber
+import com.unilim.iut.truckers.modele.NumeroTelephone
 import java.io.File
 
-class DefaultController {
+class DefautControleur {
 
-    private val controlleurJson = JsonController()
+    private val controleurJson = JsonControleur()
 
     /**
      * Cette fonction permet de vérifier si un fichier JSON existe.
      *
-     * @param context Ce paramètre est le contexte de l'application.
+     * @param contexte Ce paramètre est le contexte de l'application.
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
      * @return Cette fonction retourne un booléen.
      */
-    fun verificationDefaultJson(context: Context?): Boolean {
-        val fichier = File(context?.filesDir, "defaut.json")
+    fun verificationDefaultJson(contexte: Context?): Boolean {
+        val fichier = File(contexte?.filesDir, "defaut.json")
         if (!fichier.exists()) {
             return false
         }
@@ -29,21 +29,21 @@ class DefaultController {
      * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction ne retourne rien.
      */
-    fun chargementJson(context: Context?): String {
-        return controlleurJson.charger(context, "defaut.json").toString()
+    fun chargementJson(contexte: Context?): String {
+        return controleurJson.charger(contexte, "defaut.json").toString()
     }
 
     /**
      * Cette fonction permet de charger une liste de String mot-clés.
      *
-     * @param context Ce paramètre est le contexte de l'application.
+     * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste de String mot-clés.
      */
-    fun chargementMotsClesDefaut(context: Context?): MutableList<String> {
-        val jsonObject = controlleurJson.charger(context, "defaut.json")
+    fun chargementMotsClesDefaut(contexte: Context?): MutableList<String> {
+        val objetJson = controleurJson.charger(contexte, "defaut.json")
         val liste = mutableListOf<String>()
 
-        val jsonArray = jsonObject.getJSONArray("mots_cles")
+        val jsonArray = objetJson.getJSONArray("mots_cles")
 
         for (i in 0 until jsonArray.length()) {
             val motCle = jsonArray.getString(i)
@@ -56,18 +56,18 @@ class DefaultController {
     /**
      * Cette fonction permet de charger une liste de String mot-clés.
      *
-     * @param context Ce paramètre est le contexte de l'application.
+     * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste de String mot-clés.
      */
-    fun chargementListeBlancheDefaut(context: Context?, nomTableauJson: String): MutableList<PhoneNumber> {
-        val jsonObject = controlleurJson.charger(context, "defaut.json")
-        val liste = mutableListOf<PhoneNumber>()
+    fun chargementListeBlancheDefaut(contexte: Context?, nomTableauJson: String): MutableList<NumeroTelephone> {
+        val objetJson = controleurJson.charger(contexte, "defaut.json")
+        val liste = mutableListOf<NumeroTelephone>()
 
-        val jsonArray = jsonObject.getJSONArray(nomTableauJson)
+        val tableauJson = objetJson.getJSONArray(nomTableauJson)
 
-        for (i in 0 until jsonArray.length()) {
-            val motCle = jsonArray.getString(i)
-            liste.add(PhoneNumber(motCle))
+        for (i in 0 until tableauJson.length()) {
+            val motCle = tableauJson.getString(i)
+            liste.add(NumeroTelephone(motCle))
         }
 
         return liste
@@ -81,6 +81,6 @@ class DefaultController {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJSONDefaut(contexte: Context?) {
-        controlleurJson.supressionJSON(contexte, "defaut.json")
+        controleurJson.supressionJSON(contexte, "defaut.json")
     }
 }

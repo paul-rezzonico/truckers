@@ -1,12 +1,12 @@
-package com.unilim.iut.truckers.command
+package com.unilim.iut.truckers.commande
 
 import java.util.Stack
 
-class CommandHistory {
-    private val historique: Stack<Command> = Stack()
+class HistoriqueDeCommande {
+    private val historique: Stack<Commande> = Stack()
 
-    fun ajouter(command: Command) {
-        historique.push(command)
+    fun ajouter(commande: Commande) {
+        historique.push(commande)
     }
 
     fun annuler(): Boolean {
@@ -25,7 +25,7 @@ class CommandHistory {
         return historique.isEmpty()
     }
 
-    fun historique(): Stack<Command> {
+    fun historique(): Stack<Commande> {
         return historique
     }
 }

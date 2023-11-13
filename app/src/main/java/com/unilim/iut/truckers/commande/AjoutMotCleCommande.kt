@@ -1,16 +1,16 @@
-package com.unilim.iut.truckers.command
+package com.unilim.iut.truckers.commande
 
 import android.content.Context
 import android.util.Log
 
-class AddKeyWordCommand(
+class AjoutMotCleCommande(
     override var context: Context?,
     override var donnee: Any?
-) : Command() {
+) : Commande() {
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonController.sauvegarder(context, "MotsCles.json", "mots_cles",
+            jsonControleur.sauvegarder(context, "MotsCles.json", "mots_cles",
                 it
             )
         }

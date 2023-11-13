@@ -1,17 +1,16 @@
-package com.unilim.iut.truckers.command
+package com.unilim.iut.truckers.commande
 
 import android.content.Context
 import android.util.Log
-import com.unilim.iut.truckers.controller.JsonController
 
-class AddAdminNumberCommand(
+class AjoutNumeroAdminCommande(
     override var context: Context?,
     override var donnee: Any?
-): Command() {
+): Commande() {
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonController.sauvegarder(context, "ListeBlanche.json", "numero_admin",
+            jsonControleur.sauvegarder(context, "ListeBlanche.json", "numero_admin",
                 it
             )
         }

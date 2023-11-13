@@ -1,15 +1,15 @@
-package com.unilim.iut.truckers.command
+package com.unilim.iut.truckers.commande
 
 import android.content.Context
-import com.unilim.iut.truckers.controller.JsonController
+import com.unilim.iut.truckers.controleur.JsonControleur
 
-abstract class Command() {
+abstract class Commande() {
 
     abstract var context: Context?
     abstract var donnee: Any?
 
     companion object {
-        val jsonController: JsonController = JsonController()
+        val jsonControleur: JsonControleur = JsonControleur()
     }
 
     constructor(context: Context, donnee: Any?): this() {

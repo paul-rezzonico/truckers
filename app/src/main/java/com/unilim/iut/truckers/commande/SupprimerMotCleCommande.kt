@@ -1,17 +1,16 @@
-package com.unilim.iut.truckers.command
+package com.unilim.iut.truckers.commande
 
 import android.content.Context
 import android.util.Log
-import com.unilim.iut.truckers.controller.JsonController
 
-class DeleteKeyWordCommand(
+class SupprimerMotCleCommande(
     override var context: Context?,
     override var donnee: Any?
-) : Command() {
+) : Commande() {
 
     override fun executer(): Boolean {
         donnee?.let {
-            jsonController.supprimer(
+            jsonControleur.supprimer(
                 context, "MotsCles.json", "mots_cles",
                 it
             )

@@ -9,30 +9,29 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.unilim.iut.truckers.command.AddAdminNumberCommand
-import com.unilim.iut.truckers.command.AddKeyWordCommand
-import com.unilim.iut.truckers.command.AddWhiteListNumberCommand
-import com.unilim.iut.truckers.command.Command
-import com.unilim.iut.truckers.command.CommandHistory
-import com.unilim.iut.truckers.controller.CommandController
-import com.unilim.iut.truckers.controller.DefaultController
-import com.unilim.iut.truckers.controller.KeyWordController
-import com.unilim.iut.truckers.controller.MessageController
-import com.unilim.iut.truckers.controller.WhiteListController
-import com.unilim.iut.truckers.service.SmsReceiverService
+import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
+import com.unilim.iut.truckers.commande.AjoutMotCleCommande
+import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
+import com.unilim.iut.truckers.commande.HistoriqueDeCommande
+import com.unilim.iut.truckers.controleur.CommandeControleur
+import com.unilim.iut.truckers.controleur.DefautControleur
+import com.unilim.iut.truckers.controleur.MotCleControleur
+import com.unilim.iut.truckers.controleur.MessageControleur
+import com.unilim.iut.truckers.controleur.ListeBlancheControleur
+import com.unilim.iut.truckers.service.ServiceDuReceveurDeSMS
 import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
 
     companion object {
-        val history: CommandHistory = CommandHistory()
+        val history: HistoriqueDeCommande = HistoriqueDeCommande()
     }
 
-    private val controlleurCommande = CommandController()
-    private val controlleurListeBlanche = WhiteListController()
-    private val controlleurMessage = MessageController()
-    private val controlleurKeyWord = KeyWordController()
-    private val controlleurDefaut = DefaultController()
+    private val controlleurCommande = CommandeControleur()
+    private val controlleurListeBlanche = ListeBlancheControleur()
+    private val controlleurMessage = MessageControleur()
+    private val controlleurKeyWord = MotCleControleur()
+    private val controlleurDefaut = DefautControleur()
     private val SMS_PERMISSION_CODE = 123
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +55,7 @@ class MainActivity : Activity() {
         if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
             val workManager = WorkManager.getInstance(this)
-            val smsWorkerRequest = PeriodicWorkRequest.Builder(SmsReceiverService::class.java, 15, TimeUnit.MINUTES)
+            val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
 
             workManager.enqueue(smsWorkerRequest)
@@ -67,17 +66,17 @@ class MainActivity : Activity() {
             val listeNumeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
 
             for (numero in listeBlanche) {
-                controlleurCommande.executerCommande(AddWhiteListNumberCommand(this, numero))
+                controlleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(this, numero))
             }
             for (numeroAdmin in listeNumeroAdmin) {
-                controlleurCommande.executerCommande(AddAdminNumberCommand(this, numeroAdmin))
+                controlleurCommande.executerCommande(AjoutNumeroAdminCommande(this, numeroAdmin))
             }
             for (motcle in listeMotsCles) {
-                controlleurCommande.executerCommande(AddKeyWordCommand(this, motcle))
+                controlleurCommande.executerCommande(AjoutMotCleCommande(this, motcle))
             }
 
             val workManager = WorkManager.getInstance(this)
-            val smsWorkerRequest = PeriodicWorkRequest.Builder(SmsReceiverService::class.java, 15, TimeUnit.MINUTES)
+            val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
 
             workManager.enqueue(smsWorkerRequest)

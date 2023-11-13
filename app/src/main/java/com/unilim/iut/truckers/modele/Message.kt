@@ -1,7 +1,7 @@
-package com.unilim.iut.truckers.model
+package com.unilim.iut.truckers.modele
 
 data class Message(
-    val phoneNumber: PhoneNumber,
+    val numeroTelephone: NumeroTelephone,
     val message: String,
     val dateReception: String,
     val id: Int = nextId++,

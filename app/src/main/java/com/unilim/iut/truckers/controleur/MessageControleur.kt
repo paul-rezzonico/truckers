@@ -1,22 +1,21 @@
-package com.unilim.iut.truckers.controller
+package com.unilim.iut.truckers.controleur
 
 import android.content.Context
-import com.unilim.iut.truckers.MainActivity
-import com.unilim.iut.truckers.command.AddAdminNumberCommand
-import com.unilim.iut.truckers.command.AddKeyWordCommand
-import com.unilim.iut.truckers.command.AddWhiteListNumberCommand
-import com.unilim.iut.truckers.command.DeleteAdminNumberCommand
-import com.unilim.iut.truckers.command.DeleteKeyWordCommand
-import com.unilim.iut.truckers.command.DeleteWhiteListNumberCommand
-import com.unilim.iut.truckers.model.Message
-import com.unilim.iut.truckers.model.PhoneNumber
+import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
+import com.unilim.iut.truckers.commande.AjoutMotCleCommande
+import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
+import com.unilim.iut.truckers.commande.SupprimerNumeroAdminCommande
+import com.unilim.iut.truckers.commande.SupprimerMotCleCommande
+import com.unilim.iut.truckers.commande.SupprimerNumeroListeBlancheCommande
+import com.unilim.iut.truckers.modele.Message
+import com.unilim.iut.truckers.modele.NumeroTelephone
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class MessageController {
+class MessageControleur {
 
-    private val controlleurJson = JsonController()
-    private val controlleurCommande = CommandController()
+    private val controleurJson = JsonControleur()
+    private val controleurCommande = CommandeControleur()
 
     fun creationNomFichierJSON(prefixe: String): String {
         val dateDuJour = SimpleDateFormat("dd-M-yyyy").format(Date())
@@ -30,7 +29,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonBonMessage(contexte: Context?) {
-        controlleurJson.creationJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
+        controleurJson.creationJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
     }
 
     /**
@@ -41,7 +40,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        controlleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
+        controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
     }
 
     /**
@@ -51,7 +50,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonBonMessage(contexte: Context?) {
-        controlleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageValide"))
+        controleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageValide"))
     }
 
     /**
@@ -61,7 +60,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        controlleurJson.creationJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
+        controleurJson.creationJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
     }
 
     /**
@@ -72,7 +71,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        controlleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
+        controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
     }
 
     /**
@@ -82,7 +81,7 @@ class MessageController {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonMauvaisMessage(contexte: Context?) {
-        controlleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageInvalide"))
+        controleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageInvalide"))
     }
 
     /**
@@ -104,25 +103,25 @@ class MessageController {
             if (action == motCleAjout) {
                 when (cle) {
                     "mot-clé" -> {
-                        controlleurCommande.executerCommande(AddKeyWordCommand(contexte, value))
+                        controleurCommande.executerCommande(AjoutMotCleCommande(contexte, value))
                     }
                     "numéro" -> {
-                        controlleurCommande.executerCommande(AddWhiteListNumberCommand(contexte, PhoneNumber(value)))
+                        controleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
                     }
                     "administrateur" -> {
-                        controlleurCommande.executerCommande(AddAdminNumberCommand(contexte, PhoneNumber(value)))
+                        controleurCommande.executerCommande(AjoutNumeroAdminCommande(contexte, NumeroTelephone(value)))
                     }
                 }
             } else if (action == motCleSuppression) {
                 when (cle) {
                     "mot-clé" -> {
-                        controlleurCommande.executerCommande(DeleteKeyWordCommand(contexte, value))
+                        controleurCommande.executerCommande(SupprimerMotCleCommande(contexte, value))
                     }
                     "numéro" -> {
-                        controlleurCommande.executerCommande(DeleteWhiteListNumberCommand(contexte, PhoneNumber(value)))
+                        controleurCommande.executerCommande(SupprimerNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
                     }
                     "administrateur" -> {
-                        controlleurCommande.executerCommande(DeleteAdminNumberCommand(contexte, PhoneNumber(value)))
+                        controleurCommande.executerCommande(SupprimerNumeroAdminCommande(contexte, NumeroTelephone(value)))
                     }
                 }
             }

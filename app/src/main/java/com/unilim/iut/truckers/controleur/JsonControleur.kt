@@ -1,11 +1,11 @@
-package com.unilim.iut.truckers.controller
+package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.unilim.iut.truckers.exception.ReadWhiteListException
-import com.unilim.iut.truckers.exception.WriteWhiteListException
+import com.unilim.iut.truckers.exception.LectureListeBlancheException
+import com.unilim.iut.truckers.exception.EcritureListeBlancheException
 import com.unilim.iut.truckers.facade.IFacadeDePersistence
 import org.json.JSONArray
 import org.json.JSONObject
@@ -13,7 +13,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
-class JsonController : IFacadeDePersistence{
+class JsonControleur : IFacadeDePersistence{
     private val jackson = ObjectMapper().registerModule(KotlinModule())
 
 
@@ -35,7 +35,7 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
 
-        } catch (e: WriteWhiteListException) {
+        } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
         }
     }
@@ -65,7 +65,7 @@ class JsonController : IFacadeDePersistence{
      */
     override fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
 
-        val donneesSerialises = jackson.writeValueAsString(donnees)
+        val donneesSerialisees = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
@@ -84,13 +84,13 @@ class JsonController : IFacadeDePersistence{
 
         if (donneesJson != null) {
             for (i in 0 until donneesJson.length()) {
-                if (donneesJson.getString(i) == donneesSerialises) {
+                if (donneesJson.getString(i) == donneesSerialisees) {
                     return false
                 }
             }
         }
 
-        donneesJson?.put(donneesSerialises)
+        donneesJson?.put(donneesSerialisees)
         json?.put(champs, donneesJson)
 
         try {
@@ -100,7 +100,7 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
             return true
-        } catch (e: WriteWhiteListException) {
+        } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
             return false
         }
@@ -160,7 +160,7 @@ class JsonController : IFacadeDePersistence{
             fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
             return true
-        } catch (e: WriteWhiteListException) {
+        } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
             return false
         }
@@ -182,7 +182,7 @@ class JsonController : IFacadeDePersistence{
                 val jsonStr = fluxEntree.bufferedReader().use { it.readText() }
                 objetJson = JSONObject(jsonStr)
             }
-        } catch (e: ReadWhiteListException) {
+        } catch (e: LectureListeBlancheException) {
             Log.d("TruckerService", e.message)
         }
 

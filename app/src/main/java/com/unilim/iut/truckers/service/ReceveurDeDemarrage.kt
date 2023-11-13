@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class BootReceiver : BroadcastReceiver() {
+class ReceveurDeDemarrage : BroadcastReceiver() {
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention?.action == Intent.ACTION_BOOT_COMPLETED) {
             val intentionDeLancement = contexte?.packageManager?.getLaunchIntentForPackage(contexte.packageName)

@@ -7,9 +7,9 @@ import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
-class SmsReceiverService(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+class ServiceDuReceveurDeSMS(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
-    private val smsReceiver = SmsReceiver()
+    private val smsReceiver = ReceveurDeSMS()
 
     override fun doWork(): Result {
         val sharedPreferences = applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
