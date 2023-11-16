@@ -7,10 +7,12 @@ import android.util.Log
 import android.widget.Toast
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.unilim.iut.truckers.controleur.LogcatControleur
 
 class ServiceDuReceveurDeSMS(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
 
     private val smsReceiver = ReceveurDeSMS()
+    private val logcatControleur = LogcatControleur()
 
     override fun doWork(): Result {
         val sharedPreferences = applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
@@ -22,7 +24,7 @@ class ServiceDuReceveurDeSMS(context: Context, workerParams: WorkerParameters) :
 
             sharedPreferences.edit().putBoolean("is_receiver_registered", true).apply()
             Log.d("TruckerService", "Service actif")
-            Toast.makeText(applicationContext, "Service actif", Toast.LENGTH_SHORT).show()
+            logcatControleur.ecrireDansFichierLog("Service actif")
         }
 
         return Result.success()

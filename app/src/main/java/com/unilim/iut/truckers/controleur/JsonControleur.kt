@@ -14,16 +14,19 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 
 class JsonControleur : IFacadeDePersistence{
-    private val jackson = ObjectMapper().registerModule(KotlinModule())
 
+    private val jackson = ObjectMapper().registerModule(KotlinModule())
+    private val logcatControleur = LogcatControleur()
 
     fun creationJSON(contexte: Context?, cheminFichier: String, champs: String) {
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
             Log.d("TruckerService", "Le fichier JSON existe déjà : $cheminFichier")
+            logcatControleur.ecrireDansFichierLog("Le fichier JSON existe déjà : $cheminFichier")
             return
         }
         Log.d("TruckerService", "Création du fichier JSON : $cheminFichier")
+        logcatControleur.ecrireDansFichierLog("Création du fichier JSON : $cheminFichier")
 
         val objetJson = JSONObject()
         objetJson.put(champs, null)
@@ -37,6 +40,7 @@ class JsonControleur : IFacadeDePersistence{
 
         } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
+            logcatControleur.ecrireDansFichierLog(e.message)
         }
     }
 
@@ -51,6 +55,7 @@ class JsonControleur : IFacadeDePersistence{
         if (fichier.exists()) {
             fichier.delete()
             Log.d("TruckerService", "Le fichier JSON a été supprimé : $cheminFichier")
+            logcatControleur.ecrireDansFichierLog("Le fichier JSON a été supprimé : $cheminFichier")
         }
     }
 
@@ -102,6 +107,7 @@ class JsonControleur : IFacadeDePersistence{
             return true
         } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
+            logcatControleur.ecrireDansFichierLog(e.message)
             return false
         }
     }
@@ -136,6 +142,7 @@ class JsonControleur : IFacadeDePersistence{
         if (champs != "numero_admin") {
             for (i in 0 until liste!!.length()) {
                 Log.d("TruckerService", liste.getString(i))
+                logcatControleur.ecrireDansFichierLog(liste.getString(i))
                 if (liste.getString(i) == donneesSerealises) {
                     liste.remove(i)
                 }
@@ -143,6 +150,7 @@ class JsonControleur : IFacadeDePersistence{
         } else if (liste?.length()!! > 1) {
             for (i in 0 until liste.length()) {
                 Log.d("TruckerService", liste.getString(i))
+                logcatControleur.ecrireDansFichierLog(liste.getString(i))
                 if (liste.getString(i) == donneesSerealises) {
                     liste.remove(i)
                 }
@@ -162,6 +170,7 @@ class JsonControleur : IFacadeDePersistence{
             return true
         } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
+            logcatControleur.ecrireDansFichierLog(e.message)
             return false
         }
     }
@@ -184,6 +193,7 @@ class JsonControleur : IFacadeDePersistence{
             }
         } catch (e: LectureListeBlancheException) {
             Log.d("TruckerService", e.message)
+            logcatControleur.ecrireDansFichierLog(e.message)
         }
 
         return objetJson

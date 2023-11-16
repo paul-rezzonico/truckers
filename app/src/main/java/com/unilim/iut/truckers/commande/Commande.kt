@@ -11,11 +11,5 @@ abstract class Commande() {
     companion object {
         val jsonControleur: JsonControleur = JsonControleur()
     }
-
-    constructor(context: Context, donnee: Any?): this() {
-        this.context = context
-        this.donnee = donnee
-    }
-
     abstract fun executer(): Boolean
 }

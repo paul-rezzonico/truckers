@@ -8,6 +8,7 @@ import android.util.Log
 import com.unilim.iut.truckers.controleur.MotCleControleur
 import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.controleur.ListeBlancheControleur
+import com.unilim.iut.truckers.controleur.LogcatControleur
 import com.unilim.iut.truckers.modele.NumeroTelephone
 import com.unilim.iut.truckers.modele.Message
 
@@ -16,6 +17,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
     private val controleurListeBlanche = ListeBlancheControleur();
     private val controleurMessage = MessageControleur();
     private val controleurMotCle = MotCleControleur();
+    private val controleurLogcat = LogcatControleur();
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
         if (intention != null) {
@@ -25,6 +27,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
 
                 for (message in messages) {
                     Log.d("TruckerService", "--------------------------------------")
+                    controleurLogcat.ecrireDansFichierLog("--------------------------------------")
                     val numeroEmetteur = message.originatingAddress?.let { NumeroTelephone(it) }
                     val corpsMessage = message.messageBody
 
@@ -35,6 +38,8 @@ class ReceveurDeSMS : BroadcastReceiver() {
                         when(numeroEmetteur.phoneNumber) {
                             in listeBlanche.toString() -> {
                                 Log.d("TruckerService", "Message de la liste blanche")
+                                controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
+
                                 if (controleurMotCle.verificationMotsCles(contexte, corpsMessage)) {
                                     controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                 } else {
@@ -44,6 +49,8 @@ class ReceveurDeSMS : BroadcastReceiver() {
 
                             in numeroAdmin.toString() -> {
                                 Log.d("TruckerService", "Message de l'administrateur")
+                                controleurLogcat.ecrireDansFichierLog("Message de l'administrateur")
+
                                 if (controleurMotCle.verificationMotsClesAdmin(contexte, corpsMessage)) {
                                     controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
                                     controleurMessage.actionMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
@@ -54,6 +61,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
 
                             else -> {
                                 Log.d("TruckerService", "Message Invalide")
+                                controleurLogcat.ecrireDansFichierLog("Message Invalide")
                             }
                         }
                     }

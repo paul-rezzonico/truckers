@@ -3,9 +3,11 @@ package com.unilim.iut.truckers
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.PeriodicWorkRequest
@@ -19,6 +21,7 @@ import com.unilim.iut.truckers.controleur.DefautControleur
 import com.unilim.iut.truckers.controleur.MotCleControleur
 import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.controleur.ListeBlancheControleur
+import com.unilim.iut.truckers.controleur.LogcatControleur
 import com.unilim.iut.truckers.service.ServiceDuReceveurDeSMS
 import java.util.concurrent.TimeUnit
 
@@ -28,6 +31,7 @@ class MainActivity : Activity() {
         val history: HistoriqueDeCommande = HistoriqueDeCommande()
     }
 
+    private val controleurLogcat = LogcatControleur()
     private val controlleurCommande = CommandeControleur()
     private val controlleurListeBlanche = ListeBlancheControleur()
     private val controlleurMessage = MessageControleur()
@@ -35,6 +39,7 @@ class MainActivity : Activity() {
     private val controlleurDefaut = DefautControleur()
     private val SMS_PERMISSION_CODE = 123
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,8 +51,7 @@ class MainActivity : Activity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), SMS_PERMISSION_CODE)
         }
 
-
-
+        controleurLogcat.supprimerFichierLog()
         controlleurListeBlanche.creationListeBlanche(this)
         controlleurMessage.creationJsonMauvaisMessage(this)
         controlleurMessage.creationJsonBonMessage(this)
@@ -89,8 +93,9 @@ class MainActivity : Activity() {
             workManager.enqueue(smsWorkerRequest)
         } else {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
-            Toast.makeText(this, "Le fichier JSON par défaut n'existe pas", Toast.LENGTH_LONG).show()
-            Toast.makeText(this, "Veuillez télécharger le fichier defaut.json sur le Drive", Toast.LENGTH_LONG).show()
+            Log.d("TruckerService", "Veuillez télécharger le fichier defaut.json sur le Drive")
+            controleurLogcat.ecrireDansFichierLog("Le fichier JSON par défaut n'existe pas")
+            controleurLogcat.ecrireDansFichierLog("Veuillez télécharger le fichier defaut.json sur le Drive")
         }
 
         finish()

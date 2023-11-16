@@ -6,6 +6,7 @@ import android.util.Log
 class MotCleControleur {
 
     private val jsonControleur = JsonControleur();
+    private val controleurLogcat = LogcatControleur();
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de String mot-clés.
@@ -52,6 +53,7 @@ class MotCleControleur {
         for (motCle in listeMotsCles.toString()) {
             if (message.contains(motCle)) {
                 Log.d("TruckerService", "Message contenant un mot-clé")
+                controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé")
                 return true
             }
         }
@@ -72,10 +74,12 @@ class MotCleControleur {
 
         if (message.contains(motCleAdmin)) {
             Log.d("TruckerService", "Message contenant un mot-clé Admin")
+            controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé Admin")
             return true
         }
 
         Log.d("TruckerService", "Message ne contenant pas de mot-clé Admin")
+        controleurLogcat.ecrireDansFichierLog("Message ne contenant pas de mot-clé Admin")
         return false
     }
 }
