@@ -8,6 +8,7 @@ import org.json.JSONObject
 class ListeBlancheControleur {
 
     private val jsonControleur = JsonControleur()
+    private val logcatControleur = LogcatControleur()
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de numéros de téléphone.
@@ -56,6 +57,7 @@ class ListeBlancheControleur {
 
             } catch (e: LectureListeBlancheException) {
                 Log.d("TruckerService", e.message)
+                logcatControleur.ecrireDansFichierLog(e.message)
             }
         }
 

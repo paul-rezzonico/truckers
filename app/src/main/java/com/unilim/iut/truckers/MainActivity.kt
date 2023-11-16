@@ -3,8 +3,11 @@ package com.unilim.iut.truckers
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.PeriodicWorkRequest
@@ -18,6 +21,7 @@ import com.unilim.iut.truckers.controleur.DefautControleur
 import com.unilim.iut.truckers.controleur.MotCleControleur
 import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.controleur.ListeBlancheControleur
+import com.unilim.iut.truckers.controleur.LogcatControleur
 import com.unilim.iut.truckers.service.ServiceDuReceveurDeSMS
 import java.util.concurrent.TimeUnit
 
@@ -27,6 +31,7 @@ class MainActivity : Activity() {
         val history: HistoriqueDeCommande = HistoriqueDeCommande()
     }
 
+    private val controleurLogcat = LogcatControleur()
     private val controlleurCommande = CommandeControleur()
     private val controlleurListeBlanche = ListeBlancheControleur()
     private val controlleurMessage = MessageControleur()
@@ -34,6 +39,7 @@ class MainActivity : Activity() {
     private val controlleurDefaut = DefautControleur()
     private val SMS_PERMISSION_CODE = 123
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,8 +47,11 @@ class MainActivity : Activity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
         } else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
+        }else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), SMS_PERMISSION_CODE)
         }
 
+        controleurLogcat.supprimerFichierLog()
         controlleurListeBlanche.creationListeBlanche(this)
         controlleurMessage.creationJsonMauvaisMessage(this)
         controlleurMessage.creationJsonBonMessage(this)
@@ -54,6 +63,7 @@ class MainActivity : Activity() {
 
         if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
+            Toast.makeText(this, "Liste blanche et mots clés déjà présents", Toast.LENGTH_LONG).show()
             val workManager = WorkManager.getInstance(this)
             val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
@@ -61,6 +71,7 @@ class MainActivity : Activity() {
             workManager.enqueue(smsWorkerRequest)
         } else if (controlleurDefaut.verificationDefaultJson(this)) {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
+            Toast.makeText(this, "Liste blanche et mots clés par défaut", Toast.LENGTH_LONG).show()
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
             val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
             val listeNumeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
@@ -82,6 +93,9 @@ class MainActivity : Activity() {
             workManager.enqueue(smsWorkerRequest)
         } else {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
+            Log.d("TruckerService", "Veuillez télécharger le fichier defaut.json sur le Drive")
+            controleurLogcat.ecrireDansFichierLog("Le fichier JSON par défaut n'existe pas")
+            controleurLogcat.ecrireDansFichierLog("Veuillez télécharger le fichier defaut.json sur le Drive")
         }
 
         finish()
