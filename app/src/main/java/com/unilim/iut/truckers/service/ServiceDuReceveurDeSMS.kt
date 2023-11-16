@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.IntentFilter
 import android.provider.Telephony
 import android.util.Log
+import android.widget.Toast
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -21,6 +22,7 @@ class ServiceDuReceveurDeSMS(context: Context, workerParams: WorkerParameters) :
 
             sharedPreferences.edit().putBoolean("is_receiver_registered", true).apply()
             Log.d("TruckerService", "Service actif")
+            Toast.makeText(applicationContext, "Service actif", Toast.LENGTH_SHORT).show()
         }
 
         return Result.success()

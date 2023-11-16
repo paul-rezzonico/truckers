@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.PeriodicWorkRequest
@@ -54,6 +55,7 @@ class MainActivity : Activity() {
 
         if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
+            Toast.makeText(this, "Liste blanche et mots clés déjà présents", Toast.LENGTH_LONG).show()
             val workManager = WorkManager.getInstance(this)
             val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
@@ -61,6 +63,7 @@ class MainActivity : Activity() {
             workManager.enqueue(smsWorkerRequest)
         } else if (controlleurDefaut.verificationDefaultJson(this)) {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
+            Toast.makeText(this, "Liste blanche et mots clés par défaut", Toast.LENGTH_LONG).show()
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
             val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
             val listeNumeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
@@ -82,6 +85,8 @@ class MainActivity : Activity() {
             workManager.enqueue(smsWorkerRequest)
         } else {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
+            Toast.makeText(this, "Le fichier JSON par défaut n'existe pas", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Veuillez télécharger le fichier defaut.json sur le Drive", Toast.LENGTH_LONG).show()
         }
 
         finish()
