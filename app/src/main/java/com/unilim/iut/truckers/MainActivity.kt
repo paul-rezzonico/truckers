@@ -38,18 +38,56 @@ class MainActivity : Activity() {
     private val controlleurKeyWord = MotCleControleur()
     private val controlleurDefaut = DefautControleur()
     private val SMS_PERMISSION_CODE = 123
+    private val REQUIRED_PERMISSIONS = arrayOf(
+        android.Manifest.permission.RECEIVE_SMS,
+        android.Manifest.permission.READ_SMS,
+        android.Manifest.permission.POST_NOTIFICATIONS,
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+    )
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
-        } else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
-        }else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), SMS_PERMISSION_CODE)
+        if (!hasRequiredPermissions()) {
+            requestPermissions()
+        } else {
+            // L'utilisateur a déjà accordé toutes les permissions nécessaires, vous pouvez continuer
+            if (savedInstanceState != null) {
+                initializeApp(savedInstanceState)
+            }
         }
+    }
+
+    private fun hasRequiredPermissions(): Boolean {
+        for (permission in REQUIRED_PERMISSIONS) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun requestPermissions() {
+        ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, SMS_PERMISSION_CODE)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            SMS_PERMISSION_CODE -> {
+                if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    initializeApp(Bundle())
+                } else {
+                    // L'utilisateur a refusé au moins une permission
+                    // Vous pouvez afficher un message expliquant pourquoi les permissions sont nécessaires
+                }
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun initializeApp(savedInstanceState : Bundle) {
+        super.onCreate(savedInstanceState)
 
         controleurLogcat.supprimerFichierLog()
         controlleurListeBlanche.creationListeBlanche(this)

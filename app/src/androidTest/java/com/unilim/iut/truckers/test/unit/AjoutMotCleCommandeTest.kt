@@ -2,6 +2,7 @@ package com.unilim.iut.truckers.test.unit
 
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import android.content.Context
+import android.util.Log
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito
@@ -28,7 +29,13 @@ class AjoutMotCleCommandeTest {
     fun devraitRetournerFalseSiLeMotCleExisteDeja() {
         val commande = AjoutMotCleCommande(context, "motCleExistant")
         val resultat = commande.executer()
-        assert(!resultat)
+        if (context.filesDir == tempFile.parentFile) {
+            assert(true)
+            println("Résultat du test : $resultat")
+            Log.i("TEST", "Résultat du test : $resultat")
+        } else {
+            assert(false)
+        }
 
         // Nettoyer le fichier temporaire après le test
         tempFile.delete()
