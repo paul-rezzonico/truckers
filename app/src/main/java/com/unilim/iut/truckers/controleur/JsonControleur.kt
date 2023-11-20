@@ -123,7 +123,7 @@ class JsonControleur : IFacadeDePersistence{
      * @return Cette fonction ne retourne rien.
      */
     override fun supprimer(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
-        val donneesSerealises = jackson.writeValueAsString(donnees)
+        val donneesSerialisees = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {
@@ -144,7 +144,7 @@ class JsonControleur : IFacadeDePersistence{
             for (i in 0 until liste!!.length()) {
                 Log.d("TruckerService", liste.getString(i))
                 logcatControleur.ecrireDansFichierLog(liste.getString(i))
-                if (liste.getString(i) == donneesSerealises) {
+                if (liste.getString(i) == donneesSerialisees) {
                     liste.remove(i)
                 }
             }
@@ -152,7 +152,7 @@ class JsonControleur : IFacadeDePersistence{
             for (i in 0 until liste.length()) {
                 Log.d("TruckerService", liste.getString(i))
                 logcatControleur.ecrireDansFichierLog(liste.getString(i))
-                if (liste.getString(i) == donneesSerealises) {
+                if (liste.getString(i) == donneesSerialisees) {
                     liste.remove(i)
                 }
             }

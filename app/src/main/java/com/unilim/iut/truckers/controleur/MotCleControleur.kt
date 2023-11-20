@@ -29,10 +29,10 @@ class MotCleControleur {
         val motsCles = mutableListOf<String>()
 
         if (jsonObject.has("mots_cles")) {
-            val jsonArray = jsonObject.getJSONArray("mots_cles")
+            val tableauJSON = jsonObject.getJSONArray("mots_cles")
 
-            for (i in 0 until jsonArray.length()) {
-                val motCle = jsonArray.getString(i)
+            for (i in 0 until tableauJSON.length()) {
+                val motCle = tableauJSON.getString(i)
                 motsCles.add(motCle)
             }
         }

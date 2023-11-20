@@ -19,7 +19,7 @@ class NumeroTelephoneTest {
     fun neDevraitPasLancerExceptionSiNumeroDeTelephoneValide() {
         val numeroDeTelephone = NumeroTelephone("0123456789")
 
-        assertThat("0123456789", Matchers.equalTo(numeroDeTelephone.phoneNumber))
+        assertThat("0123456789", Matchers.equalTo(numeroDeTelephone.numeroTelephone))
     }
 
     @Test

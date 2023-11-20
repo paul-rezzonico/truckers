@@ -43,10 +43,10 @@ class DefautControleur {
         val objetJson = controleurJson.charger(contexte, "defaut.json")
         val liste = mutableListOf<String>()
 
-        val jsonArray = objetJson.getJSONArray("mots_cles")
+        val tableauJSON = objetJson.getJSONArray("mots_cles")
 
-        for (i in 0 until jsonArray.length()) {
-            val motCle = jsonArray.getString(i)
+        for (i in 0 until tableauJSON.length()) {
+            val motCle = tableauJSON.getString(i)
             liste.add(motCle)
         }
 

@@ -41,18 +41,18 @@ class ListeBlancheControleur {
         val listeBlanche = mutableListOf<String>()
 
         if (admin && (objetJson.has("numero_admin"))) {
-            val jsonArray = objetJson.getJSONArray("numero_admin")
-            if (jsonArray.length() > 0) {
-                val numeroAdmin = jsonArray.getString(0)
+            val tableauJSON = objetJson.getJSONArray("numero_admin")
+            if (tableauJSON.length() > 0) {
+                val numeroAdmin = tableauJSON.getString(0)
                 listeBlanche.add(numeroAdmin)
             }
         } else if (objetJson.has("liste_blanche")) {
             try {
-                val jsonArray = objetJson.getJSONArray("liste_blanche")
+                val tableauJSON = objetJson.getJSONArray("liste_blanche")
 
-                for (i in 0 until jsonArray.length()) {
-                    val phoneNumber = jsonArray.getString(i)
-                    listeBlanche.add(phoneNumber)
+                for (i in 0 until tableauJSON.length()) {
+                    val numeroTelephone = tableauJSON.getString(i)
+                    listeBlanche.add(numeroTelephone)
                 }
 
             } catch (e: LectureListeBlancheException) {

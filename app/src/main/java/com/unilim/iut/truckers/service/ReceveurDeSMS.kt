@@ -35,7 +35,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
                     val numeroAdmin = controleurListeBlanche.chargementListeBlanche(contexte, true)
 
                     if (numeroEmetteur != null) {
-                        when(numeroEmetteur.phoneNumber) {
+                        when(numeroEmetteur.numeroTelephone) {
                             in listeBlanche.toString() -> {
                                 Log.d("TruckerService", "Message de la liste blanche")
                                 controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
