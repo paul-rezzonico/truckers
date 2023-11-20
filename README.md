@@ -49,6 +49,20 @@ Les administrateurs peuvent configurer l'application en utilisant des messages d
 - **Ajout d'Administrateur :** CONFIG Ajout administrateur 0453627283
 - **Suppression d'Administrateur :** CONFIG Suppression administrateur 023923492
 
+## Stockage des Messages
+
+Les messages sont stockés dans le répertoire `/data/data/com.unilim.iut.truckers/files`. Ils sont répartis dans deux fichiers distincts en fonction de leur validité. Chaque jour, de nouveaux fichiers sont créés pour minimiser les risques de perte d'informations.
+
+1. Ouvrez le device explorer sur Android Studio.
+
+2. Accédez au répertoire `/data/data/com.unilim.iut.truckers/files`.
+
+3. Vous y trouverez les fichiers `messagesValides-date` et `messageInvalides-date`.
+
+4. Pour consulter les messages ouvrez les fichiers avec un éditeur de texte.
+
+
+
 ## Consulter les Logs
 
 Pour vérifier le bon fonctionnement du service, vous pouvez consulter les logs enregistrés dans le fichier "logcat.txt" sur votre téléphone, accessible dans votre répertoire de téléchargements.
