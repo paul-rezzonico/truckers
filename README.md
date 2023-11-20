@@ -2,11 +2,9 @@
 
 Ce service a pour but de traquer les messages de chauffeurs liés à leurs itinéraires, rendez-vous, livraisons, etc.
 
-# Ajout du Fichier Défaut
+## Ajout du Fichier Défaut
 
 Pour que le service puisse se lancer, il faut donner à l'application un fichier défaut.json (contenant minimum un numéro admin par défaut).
-
-## Instructions
 
 1. Ouvrez Android Studio et connectez votre appareil Android à l'ordinateur.
 
@@ -50,4 +48,17 @@ Les administrateurs peuvent configurer l'application en utilisant des messages d
 - **Suppression de Mot-clé :** CONFIG Suppression mot-clé RENDEZ-VOUS
 - **Ajout d'Administrateur :** CONFIG Ajout administrateur 0453627283
 - **Suppression d'Administrateur :** CONFIG Suppression administrateur 023923492
+
+## Consulter les Logs
+
+Pour vérifier le bon fonctionnement du service, vous pouvez consulter les logs enregistrés dans le fichier "logcat.txt" sur votre téléphone, accessible dans votre répertoire de téléchargements.
+
+1. Ouvrez un gestionnaire de fichiers sur votre téléphone.
+
+2. Accédez au répertoire de téléchargements.
+
+3. Recherchez le fichier "logcat.txt" et ouvrez-le avec un éditeur de texte.
+
+4. Vous verrez les détails des actions du service en réponse à la réception des messages.
+
 
