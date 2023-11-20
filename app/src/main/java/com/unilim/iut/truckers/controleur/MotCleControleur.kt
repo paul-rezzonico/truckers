@@ -5,8 +5,8 @@ import android.util.Log
 
 class MotCleControleur {
 
-    private val jsonControleur = JsonControleur();
-    private val controleurLogcat = LogcatControleur();
+    private val jsonControleur = JsonControleur()
+    private val controleurLogcat = LogcatControleur()
 
     /**
      * Cette fonction permet de créer un fichier JSON contenant une liste de String mot-clés.
@@ -65,11 +65,10 @@ class MotCleControleur {
     /**
      * Cette fonction permet de vérifier si un message contient un mot-clé.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
      * @param message Ce paramètre est le message à vérifier.
      * @return Cette fonction retourne un booléen.
      */
-    fun verificationMotsClesAdmin(contexte: Context?, message: String): Boolean {
+    fun verificationMotsClesAdmin(message: String): Boolean {
         val motCleAdmin = "CONFIG"
 
         if (message.contains(motCleAdmin)) {
