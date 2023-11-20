@@ -30,16 +30,13 @@ class MainActivity : Activity() {
     private val controlleurMessage = MessageControleur()
     private val controlleurMotCles = MotCleControleur()
     private val controlleurDefaut = DefautControleur()
-    private val SMS_PERMISSION_CODE = 123
+    private val SMS_RECEIVE_PERMISSION_CODE = 123
+    private val SMS_READ_PERMISSION_CODE = 124
 
     override fun onCreate(instanceEtatSauvegardee: Bundle?) {
         super.onCreate(instanceEtatSauvegardee)
 
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
-        } else if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_PERMISSION_CODE)
-        }
+        requestSMSPermissions()
 
         controlleurListeBlanche.creationListeBlanche(this)
         controlleurMessage.creationJsonMauvaisMessage(this)
@@ -80,5 +77,27 @@ class MainActivity : Activity() {
         }
 
         finish()
+    }
+
+    private fun requestSMSPermissions() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_RECEIVE_PERMISSION_CODE)
+        }
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_READ_PERMISSION_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SMS_RECEIVE_PERMISSION_CODE || requestCode == SMS_READ_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission accordée
+                Log.d("Permissions", "SMS permission accordée")
+            } else {
+                // Permission refusée
+                Log.d("Permissions", "SMS permission refusée")
+            }
+        }
     }
 }
