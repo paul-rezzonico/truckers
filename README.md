@@ -2,6 +2,26 @@
 
 Ce service a pour but de traquer les messages de chauffeurs liés à leurs itinéraires, rendez-vous, livraisons, etc.
 
+# Ajout du Fichier Défaut
+
+Pour que le service puisse se lancer, il faut donner à l'application un fichier défaut.json (contenant minimum un numéro admin par défaut).
+
+## Instructions
+
+1. Ouvrez Android Studio et connectez votre appareil Android à l'ordinateur.
+
+2. Accédez à l'onglet "Device Explorer" dans l'IDE Android Studio.
+
+3. Naviguez vers le répertoire interne de l'application sur votre téléphone en suivant le chemin : `data/data/com.unilim.iut.truckers/files`.
+
+4. Copiez le fichier "defaut.json" situé dans le répertoire "média" du projet dans le répertoire mentionné ci-dessus sur votre téléphone.
+
+5. Assurez-vous que le fichier "defaut.json" est correctement placé dans le répertoire spécifié.
+
+Le fichier "defaut.json" contient les configurations par défaut nécessaires pour le bon fonctionnement de l'application. Veillez à ne pas modifier ce fichier de manière inappropriée pour éviter tout problème de configuration.
+Vous pouvez relancer l'application, le service va se lancer et rester actif.
+
+
 ## Utilisation de l'Application
 
 1. **Recevoir des Messages :**
