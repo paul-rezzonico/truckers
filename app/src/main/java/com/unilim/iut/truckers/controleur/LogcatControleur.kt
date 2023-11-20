@@ -1,6 +1,5 @@
 package com.unilim.iut.truckers.controleur
 
-import android.content.Context
 import android.os.Environment
 import java.io.File
 import java.io.FileOutputStream
@@ -32,9 +31,9 @@ class LogcatControleur() {
         val messageFormate = "$timestamp: $message\n"
 
         try {
-            val fileOutputStream = FileOutputStream(fichierLog, true)
-            fileOutputStream.write(messageFormate.toByteArray())
-            fileOutputStream.close()
+            val fluxDeSortieDuFichier = FileOutputStream(fichierLog, true)
+            fluxDeSortieDuFichier.write(messageFormate.toByteArray())
+            fluxDeSortieDuFichier.close()
         } catch (e: Exception) {
             e.printStackTrace()
         }

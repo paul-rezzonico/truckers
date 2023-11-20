@@ -11,6 +11,6 @@ class CommandeControleur {
      */
     fun executerCommande(commande: Commande) {
         commande.executer()
-        MainActivity.history.ajouter(commande)
+        MainActivity.historique.ajouter(commande)
     }
 }

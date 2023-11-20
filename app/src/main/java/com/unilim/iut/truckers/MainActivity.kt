@@ -22,18 +22,18 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
     companion object {
-        val history: HistoriqueDeCommande = HistoriqueDeCommande()
+        val historique: HistoriqueDeCommande = HistoriqueDeCommande()
     }
 
     private val controlleurCommande = CommandeControleur()
     private val controlleurListeBlanche = ListeBlancheControleur()
     private val controlleurMessage = MessageControleur()
-    private val controlleurKeyWord = MotCleControleur()
+    private val controlleurMotCles = MotCleControleur()
     private val controlleurDefaut = DefautControleur()
     private val SMS_PERMISSION_CODE = 123
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(instanceEtatSauvegardee: Bundle?) {
+        super.onCreate(instanceEtatSauvegardee)
 
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_PERMISSION_CODE)
@@ -44,19 +44,19 @@ class MainActivity : Activity() {
         controlleurListeBlanche.creationListeBlanche(this)
         controlleurMessage.creationJsonMauvaisMessage(this)
         controlleurMessage.creationJsonBonMessage(this)
-        controlleurKeyWord.creationJSONMotCle(this)
+        controlleurMotCles.creationJSONMotCle(this)
         applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
             .edit()
             .putBoolean("is_receiver_registered", false)
             .apply()
 
-        if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurKeyWord.chargementMotsCles(this).isNotEmpty()) {
+        if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurMotCles.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
-            val workManager = WorkManager.getInstance(this)
+            val managerDeTravail = WorkManager.getInstance(this)
             val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
 
-            workManager.enqueue(smsWorkerRequest)
+            managerDeTravail.enqueue(smsWorkerRequest)
         } else if (controlleurDefaut.verificationDefaultJson(this)) {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
@@ -71,10 +71,10 @@ class MainActivity : Activity() {
             for (motcle in listeMotsCles) {
                 controlleurCommande.executerCommande(AjoutMotCleCommande(this, motcle))
             }
-            val workManager = WorkManager.getInstance(this)
-            val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
+            val managerDeTravail = WorkManager.getInstance(this)
+            val requeteDuTravailleurDeSms = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
-            workManager.enqueue(smsWorkerRequest)
+            managerDeTravail.enqueue(requeteDuTravailleurDeSms)
         } else {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
         }
