@@ -1,8 +1,13 @@
 package com.unilim.iut.truckers
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -36,7 +41,68 @@ class MainActivity : Activity() {
     override fun onCreate(instanceEtatSauvegardee: Bundle?) {
         super.onCreate(instanceEtatSauvegardee)
 
-        requestSMSPermissions()
+        requestPermissions()
+    }
+
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            } else {
+                requestSMSPermissions()
+            }
+        } else {
+            requestSMSPermissions()
+        }
+    }
+
+    private fun requestSMSPermissions() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_RECEIVE_PERMISSION_CODE)
+        }
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_READ_PERMISSION_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == SMS_RECEIVE_PERMISSION_CODE || requestCode == SMS_READ_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permissions", "SMS permission accordée")
+                if (areAllPermissionsGranted()) {
+                    enqueueWorkManagerJob()
+                }
+            } else {
+                Log.d("Permissions", "SMS permission refusée")
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()) {
+            if (areAllPermissionsGranted()) {
+                enqueueWorkManagerJob()
+            } else {
+                requestSMSPermissions()
+            }
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            if (areAllPermissionsGranted()) {
+                enqueueWorkManagerJob()
+            }
+        }
+    }
+
+    private fun areAllPermissionsGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun enqueueWorkManagerJob() {
 
         controlleurListeBlanche.creationListeBlanche(this)
         controlleurMessage.creationJsonMauvaisMessage(this)
@@ -54,7 +120,7 @@ class MainActivity : Activity() {
                 .build()
 
             managerDeTravail.enqueue(smsWorkerRequest)
-        } else if (controlleurDefaut.verificationDefaultJson(this)) {
+        } else if (controlleurDefaut.verificationDefaultJson()) {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
             val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
             val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
@@ -77,27 +143,5 @@ class MainActivity : Activity() {
         }
 
         finish()
-    }
-
-    private fun requestSMSPermissions() {
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.RECEIVE_SMS), SMS_RECEIVE_PERMISSION_CODE)
-        }
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_READ_PERMISSION_CODE)
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == SMS_RECEIVE_PERMISSION_CODE || requestCode == SMS_READ_PERMISSION_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission accordée
-                Log.d("Permissions", "SMS permission accordée")
-            } else {
-                // Permission refusée
-                Log.d("Permissions", "SMS permission refusée")
-            }
-        }
     }
 }

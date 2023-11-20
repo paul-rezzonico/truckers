@@ -1,26 +1,24 @@
 package com.unilim.iut.truckers.controleur
 
 import android.content.Context
+import android.os.Environment
 import com.unilim.iut.truckers.modele.NumeroTelephone
 import java.io.File
 
 class DefautControleur {
 
-    private val controleurJson = JsonControleur()
+    private val controleurJson = ChargeurDeStockageExterne()
 
     /**
      * Cette fonction permet de vérifier si un fichier JSON existe.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
      * @return Cette fonction retourne un booléen.
      */
-    fun verificationDefaultJson(contexte: Context?): Boolean {
-        val fichier = File(contexte?.filesDir, "defaut.json")
-        if (!fichier.exists()) {
-            return false
-        }
-        return true
+    fun verificationDefaultJson(): Boolean {
+        val downloadsPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val fichier = File(downloadsPath, "defaut.json")
+
+        return fichier.exists()
     }
 
     /**
@@ -73,14 +71,4 @@ class DefautControleur {
         return liste
     }
 
-    /**
-     * Cette fonction permet d'ajouter un mot-clé dans le fichier JSON contenant une liste de String mot-clés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param motCle Ce paramètre est le mot-clé à ajouter dans le fichier JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun suppressionJSONDefaut(contexte: Context?) {
-        controleurJson.supressionJSON(contexte, "defaut.json")
-    }
 }
