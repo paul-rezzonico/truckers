@@ -6,15 +6,14 @@ Ce service a pour but de traquer les messages de chauffeurs liés à leurs itin�
 
 Pour que le service puisse se lancer, il faut donner à l'application un fichier défaut.json (contenant minimum un numéro admin par défaut).
 
-1. Ouvrez Android Studio et connectez votre appareil Android à l'ordinateur.
+1. Ouvrez un gestionnaire de fichiers sur votre téléphone.
 
-2. Accédez à l'onglet "Device Explorer" dans l'IDE Android Studio.
+2. Accédez au répertoire de téléchargements.
 
-3. Naviguez vers le répertoire interne de l'application sur votre téléphone en suivant le chemin : `data/data/com.unilim.iut.truckers/files`.
+3. Placer le fichier defaut.json
 
-4. Copiez le fichier "defaut.json" situé dans le répertoire "média" du projet dans le répertoire mentionné ci-dessus sur votre téléphone.
+4. Lancer l'application, après avoir validé les permissions pour le stockage ainsi que les sms, le service devrait se lancer et créer un fichier logcat.txt dans le même répertoire que le fichier defaut. 
 
-5. Assurez-vous que le fichier "defaut.json" est correctement placé dans le répertoire spécifié.
 
 Le fichier "defaut.json" contient les configurations par défaut nécessaires pour le bon fonctionnement de l'application. Veillez à ne pas modifier ce fichier de manière inappropriée pour éviter tout problème de configuration.
 Vous pouvez relancer l'application, le service va se lancer et rester actif.
