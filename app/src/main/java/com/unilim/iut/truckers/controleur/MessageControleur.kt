@@ -43,6 +43,20 @@ class MessageControleur {
         controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
     }
 
+    fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<String> {
+        val objetJson = controleurJson.charger(contexte, creationNomFichierJSON("MessageValide"))
+        val liste = mutableListOf<String>()
+
+        val tableauJson = objetJson.getJSONArray("messages")
+
+        for (i in 0 until tableauJson.length()) {
+            val message = tableauJson.getString(i)
+            liste.add(message.toString())
+        }
+
+        return liste
+    }
+
     /**
      * Cette fonction permet de supprimer le fichier JSON contenant une liste d'objet Message qui sont ceux recherchés.
      *
@@ -72,6 +86,26 @@ class MessageControleur {
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
         controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
+    }
+
+    /**
+     * Cette fonction permet de charger une liste d'objet Message qui sont ceux recherchés.
+     *
+     * @param contexte Ce paramètre est le contexte de l'application.
+     * @return Cette fonction retourne une liste d'objet Message.
+     */
+    fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<String> {
+        val objetJson = controleurJson.charger(contexte, creationNomFichierJSON("MessageInvalide"))
+        val liste = mutableListOf<String>()
+
+        val tableauJson = objetJson.getJSONArray("messages")
+
+        for (i in 0 until tableauJson.length()) {
+            val message = tableauJson.getString(i)
+            liste.add(message.toString())
+        }
+
+        return liste
     }
 
     /**

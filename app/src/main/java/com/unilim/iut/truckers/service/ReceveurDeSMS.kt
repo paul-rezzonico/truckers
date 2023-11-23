@@ -66,6 +66,11 @@ class ReceveurDeSMS : BroadcastReceiver() {
                                     controleurLogcat.ecrireDansFichierLog("Message Invalide")
                                 }
                             }
+
+                            Log.d("TruckerService", controleurMessage.avoirMessagesDansBonJsonMessage(contexte).toString())
+                            Log.d("TruckerService", controleurMessage.avoirMessagesDansMauvaisJsonMessage(contexte).toString())
+                            controleurLogcat.ecrireDansFichierLog(controleurMessage.avoirMessagesDansBonJsonMessage(contexte).toString())
+                            controleurLogcat.ecrireDansFichierLog(controleurMessage.avoirMessagesDansMauvaisJsonMessage(contexte).toString())
                         }
                     } catch (e: Exception) {
                         Log.d("TruckerService", e.message.toString())
