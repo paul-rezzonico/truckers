@@ -3,7 +3,7 @@ package com.unilim.iut.truckers.modele
 data class NumeroTelephone(var numeroTelephone: String) {
     init {
         require(estUnNumeroFrancaisValide(numeroTelephone)) {
-            "Le numéro de téléphone doit être au format international français"
+            "Le numéro de téléphone doit être au format international français : $numeroTelephone"
         }
         if (numeroTelephone.substring(0, 3) == "+33") {
             numeroTelephone = "0" + numeroTelephone.substring(3)

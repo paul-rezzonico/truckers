@@ -33,7 +33,7 @@ class MotCleControleur {
 
             for (i in 0 until tableauJSON.length()) {
                 val motCle = tableauJSON.getString(i)
-                motsCles.add(motCle)
+                motsCles.add(motCle.toString())
             }
         }
 
@@ -50,15 +50,16 @@ class MotCleControleur {
     fun verificationMotsCles(contexte: Context?, message: String): Boolean {
         val listeMotsCles = chargementMotsCles(contexte)
 
-        for (motCle in listeMotsCles.toString()) {
-            if (message.contains(motCle)) {
+        for (motCle in listeMotsCles) {
+            if (message.contains(motCle.replace("\"", ""))) {
                 Log.d("TruckerService", "Message contenant un mot-clé")
-                controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé")
+                controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé : $motCle")
                 return true
             }
         }
 
         Log.d("TruckerService", "Message ne contenant pas de mot-clé")
+        controleurLogcat.ecrireDansFichierLog("Message ne contenant pas de mot-clé")
         return false
     }
 
@@ -73,7 +74,7 @@ class MotCleControleur {
 
         if (message.contains(motCleAdmin)) {
             Log.d("TruckerService", "Message contenant un mot-clé Admin")
-            controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé Admin")
+            controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé Admin : $motCleAdmin")
             return true
         }
 
