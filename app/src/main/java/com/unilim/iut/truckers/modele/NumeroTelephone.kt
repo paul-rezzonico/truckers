@@ -11,6 +11,7 @@ data class NumeroTelephone(val numeroTelephone: String) {
         // Numéro de téléphone français au format international :
         //  0X XX XX XX XX (10 chiffres) avec X compris entre 1 et 9
         val regex = """0[1-9]\d{8}"""
-        return numeroTelephone.matches(regex.toRegex())
+        val regex33 = """\+33[1-9]\d{8}"""
+        return numeroTelephone.matches(regex.toRegex()) || numeroTelephone.matches(regex33.toRegex())
     }
 }
