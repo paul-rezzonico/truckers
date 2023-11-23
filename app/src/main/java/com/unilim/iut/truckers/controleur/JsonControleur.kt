@@ -12,7 +12,6 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import android.os.Environment
 
 class JsonControleur : IFacadeDePersistence{
 
@@ -51,13 +50,15 @@ class JsonControleur : IFacadeDePersistence{
      * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction ne retourne rien.
      */
-    fun supressionJSON(contexte: Context?, cheminFichier: String) {
+    fun supressionJSON(contexte: Context?, cheminFichier: String) : Boolean {
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
             fichier.delete()
             Log.d("TruckerService", "Le fichier JSON a été supprimé : $cheminFichier")
             logcatControleur.ecrireDansFichierLog("Le fichier JSON a été supprimé : $cheminFichier")
+            return true
         }
+        return false
     }
 
     /**

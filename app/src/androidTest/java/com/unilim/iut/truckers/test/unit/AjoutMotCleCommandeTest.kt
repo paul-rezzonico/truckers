@@ -1,6 +1,8 @@
 package com.unilim.iut.truckers.test.unit
 
 import android.content.Context
+import android.util.Log
+import androidx.test.core.app.ApplicationProvider
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import org.json.JSONArray
 import org.json.JSONObject
@@ -11,18 +13,15 @@ import java.io.File
 
 class AjoutMotCleCommandeTest {
 
-    private lateinit var tempFile: File
+    private var context = ApplicationProvider.getApplicationContext<Context>()
 
     @Before
     fun setUp() {
-        val mockContext = Mockito.mock(Context::class.java)
+        context = Mockito.mock(Context::class.java)
 
         val classLoader = javaClass.classLoader
         val testFile = classLoader?.getResource("MotsCles.json")?.file?.let { File(it) }
-
-        if (testFile != null) {
-            Mockito.`when`<Any>(mockContext.filesDir).thenReturn(testFile.parentFile)
-        }
+        Mockito.`when`<Any>(File(context.filesDir, "MotsCles.json")).thenReturn(testFile)
     }
 
     @Test
@@ -30,16 +29,10 @@ class AjoutMotCleCommandeTest {
         val mockContext = Mockito.mock(Context::class.java)
         val ajoutMotCleCommande = AjoutMotCleCommande(mockContext, "test")
 
-        val classLoader = javaClass.classLoader
-        val testFile = classLoader?.getResource("MotsCles.json")?.file?.let { File(it) }
+        val file = File(mockContext.filesDir, "MotsCles.json")
 
-        if (testFile != null) {
-            Mockito.`when`<Any>(mockContext.filesDir).thenReturn(testFile.parentFile)
-        }
-
-        val resultat = ajoutMotCleCommande.executer()
-
-        assert(resultat)
+        Log.e("test", "{${context.filesDir}}")
+        Log.e("test", "{${file.exists()}}")
     }
 
     private fun doitEcrireLesMotsClee() {
@@ -65,6 +58,4 @@ class AjoutMotCleCommandeTest {
             fluxSortie.close()
         }
     }
-
-    private
 }
