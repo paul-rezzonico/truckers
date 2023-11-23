@@ -16,7 +16,7 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
         champs: String,
         donnees: Any
     ): Boolean {
-        TODO("Not yet implemented")
+        TODO("Not needed here")
     }
 
     override fun charger(context: Context?, cheminFichier: String): JSONObject {
@@ -31,11 +31,11 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
                 val jsonStr = file.readText(Charsets.UTF_8)
                 objetJson = JSONObject(jsonStr)
             } else {
-                Log.d("TruckerService", "File not found in Downloads folder")
+                Log.d("TruckerService", "Fichier JSOn non trouvé dans le répertoire Downloads")
             }
-        } catch (e: Exception) { // Catch a more general exception
-            Log.d("TruckerService", "Error reading JSON file: ${e.message}")
-            logcatControleur.ecrireDansFichierLog("Error reading JSON file: ${e.message}")
+        } catch (e: Exception) {
+            Log.d("TruckerService", "Erreur lors de la lecture du fichier JSON, ${e.message}")
+            logcatControleur.ecrireDansFichierLog("Erreur lors de la lecture du fichier JSON, ${e.message}")
         }
 
         return objetJson
@@ -47,6 +47,6 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
         champs: String,
         donnees: Any
     ): Boolean {
-        TODO("Not yet implemented")
+        TODO("Not needed here")
     }
 }
