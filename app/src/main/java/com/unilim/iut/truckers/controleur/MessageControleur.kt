@@ -1,6 +1,7 @@
 package com.unilim.iut.truckers.controleur
 
 import android.content.Context
+import android.util.Log
 import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
@@ -16,6 +17,7 @@ class MessageControleur {
 
     private val controleurJson = JsonControleur()
     private val controleurCommande = CommandeControleur()
+    private val controleurLogcat = LogcatControleur()
 
     fun creationNomFichierJSON(prefixe: String): String {
         val dateDuJour = SimpleDateFormat("dd-M-yyyy").format(Date())
@@ -54,6 +56,12 @@ class MessageControleur {
             liste.add(message.toString())
         }
 
+        controleurLogcat.ecrireDansFichierLog("Liste des messages dans le JSON valide :")
+        Log.d("TruckerService", "Liste des messages dans le JSON valide :")
+        for (message in liste) {
+            controleurLogcat.ecrireDansFichierLog(message)
+            Log.d("TruckerService", message)
+        }
         return liste
     }
 
@@ -105,6 +113,12 @@ class MessageControleur {
             liste.add(message.toString())
         }
 
+        controleurLogcat.ecrireDansFichierLog("Liste des messages dans le JSON invalide :")
+        Log.d("TruckerService", "Liste des messages dans le JSON invalide :")
+        for (message in liste) {
+            controleurLogcat.ecrireDansFichierLog(message)
+            Log.d("TruckerService", message)
+        }
         return liste
     }
 

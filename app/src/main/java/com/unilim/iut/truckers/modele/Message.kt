@@ -4,10 +4,14 @@ data class Message(
     val numeroTelephone: NumeroTelephone,
     val message: String,
     val dateReception: String,
-    val id: Int = nextId++,
+    val id: Int = obtenirNouvelId(),
     var estSynchro: Boolean = false
 ) {
     companion object {
-        private var nextId = 1
+        private var compteurIds = 0
+
+        fun obtenirNouvelId(): Int {
+            return compteurIds++
+        }
     }
 }
