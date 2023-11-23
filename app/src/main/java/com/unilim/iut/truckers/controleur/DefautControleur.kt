@@ -45,7 +45,7 @@ class DefautControleur {
 
         for (i in 0 until tableauJSON.length()) {
             val motCle = tableauJSON.getString(i)
-            liste.add(motCle)
+            liste.add(motCle.toString())
         }
 
         return liste
@@ -64,8 +64,8 @@ class DefautControleur {
         val tableauJson = objetJson.getJSONArray(nomTableauJson)
 
         for (i in 0 until tableauJson.length()) {
-            val motCle = tableauJson.getString(i)
-            liste.add(NumeroTelephone(motCle))
+            val numero = tableauJson.getString(i)
+            liste.add(NumeroTelephone(numero.toString()))
         }
 
         return liste

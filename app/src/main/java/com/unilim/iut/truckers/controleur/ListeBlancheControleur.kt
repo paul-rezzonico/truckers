@@ -44,7 +44,7 @@ class ListeBlancheControleur {
             val tableauJSON = objetJson.getJSONArray("numero_admin")
             if (tableauJSON.length() > 0) {
                 val numeroAdmin = tableauJSON.getString(0)
-                listeBlanche.add(numeroAdmin)
+                listeBlanche.add(numeroAdmin.toString())
             }
         } else if (objetJson.has("liste_blanche")) {
             try {
@@ -52,7 +52,7 @@ class ListeBlancheControleur {
 
                 for (i in 0 until tableauJSON.length()) {
                     val numeroTelephone = tableauJSON.getString(i)
-                    listeBlanche.add(numeroTelephone)
+                    listeBlanche.add(numeroTelephone.toString())
                 }
 
             } catch (e: LectureListeBlancheException) {
