@@ -50,7 +50,7 @@ class MotCleControleur {
     fun verificationMotsCles(contexte: Context?, message: String): Boolean {
         val listeMotsCles = chargementMotsCles(contexte)
 
-        for (motCle in listeMotsCles.toString()) {
+        for (motCle in listeMotsCles) {
             if (message.contains(motCle)) {
                 Log.d("TruckerService", "Message contenant un mot-clé")
                 controleurLogcat.ecrireDansFichierLog("Message contenant un mot-clé")
