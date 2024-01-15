@@ -12,6 +12,7 @@ import com.unilim.iut.truckers.modele.Message
 import com.unilim.iut.truckers.modele.NumeroTelephone
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 class MessageControleur {
 
@@ -20,8 +21,8 @@ class MessageControleur {
     private val controleurLogcat = LogcatControleur()
 
     fun creationNomFichierJSON(prefixe: String): String {
-        val dateDuJour = SimpleDateFormat("dd-M-yyyy").format(Date())
-        return "$prefixe" + "_" + "$dateDuJour.json"
+        val dateDuJour = SimpleDateFormat("dd-M-yyyy", Locale.FRANCE).format(Date())
+        return prefixe + "_" + "$dateDuJour.json"
     }
 
     /**
