@@ -21,35 +21,35 @@ class ReceveurDeSMS : BroadcastReceiver() {
     private val controleurLogcat = LogcatControleur()
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
-        if (isSmsReceivedIntent(intention)) {
-            processReceivedSms(contexte, intention)
+        if (intentionSmsRecu(intention)) {
+            traiterSmsEntrant(contexte, intention)
         }
     }
 
-    private fun isSmsReceivedIntent(intent: Intent?): Boolean {
-        return intent?.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION
+    private fun intentionSmsRecu(intention: Intent?): Boolean {
+        return intention?.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION
     }
 
-    private fun processReceivedSms(contexte: Context?, intention: Intent?) {
+    private fun traiterSmsEntrant(contexte: Context?, intention: Intent?) {
         val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
         for (message in messages) {
-            handleReceivedMessage(contexte, message)
+            gererMessageRecu(contexte, message)
         }
     }
 
-    private fun handleReceivedMessage(contexte: Context?, message: SmsMessage) {
-        val numeroEmetteur = getNumeroEmetteur(message)
+    private fun gererMessageRecu(contexte: Context?, message: SmsMessage) {
+        val numeroEmetteur = recupererNumeroEmetteur(message)
         if (numeroEmetteur != null) {
             Log.d("TruckerService", "--------------------------------------------------")
             when {
-                isMessageFromListeBlanche(contexte, numeroEmetteur) -> handleListeBlancheMessage(contexte, numeroEmetteur, message)
-                isMessageFromAdmin(contexte, numeroEmetteur) -> handleAdminMessage(contexte, numeroEmetteur, message)
-                else -> handleInvalidMessage()
+                estDansListeBlanche(contexte, numeroEmetteur) -> gererMessageListeBlanche(contexte, numeroEmetteur, message)
+                estUnAdmin(contexte, numeroEmetteur) -> gererMessageAdmin(contexte, numeroEmetteur, message)
+                else -> gererMessageInvalide()
             }
         }
     }
 
-    private fun getNumeroEmetteur(message: SmsMessage): NumeroTelephone? {
+    private fun recupererNumeroEmetteur(message: SmsMessage): NumeroTelephone? {
         return try {
             message.originatingAddress?.let { NumeroTelephone(it) }
         } catch (e: Exception) {
@@ -59,17 +59,17 @@ class ReceveurDeSMS : BroadcastReceiver() {
         }
     }
 
-    private fun isMessageFromListeBlanche(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
+    private fun estDansListeBlanche(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
         val listeBlanche = controleurListeBlanche.chargementListeBlanche(contexte, false)
         return numeroEmetteur.numeroTelephone in listeBlanche.toString()
     }
 
-    private fun isMessageFromAdmin(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
+    private fun estUnAdmin(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
         val numeroAdmin = controleurListeBlanche.chargementListeBlanche(contexte, true)
         return numeroEmetteur.numeroTelephone in numeroAdmin.toString()
     }
 
-    private fun handleListeBlancheMessage(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
+    private fun gererMessageListeBlanche(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
         Log.d("TruckerService", "Message de la liste blanche")
         controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
 
@@ -80,7 +80,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
         }
     }
 
-    private fun handleAdminMessage(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
+    private fun gererMessageAdmin(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
         Log.d("TruckerService", "Message de l'administrateur")
         controleurLogcat.ecrireDansFichierLog("Message de l'administrateur")
 
@@ -92,7 +92,7 @@ class ReceveurDeSMS : BroadcastReceiver() {
         }
     }
 
-    private fun handleInvalidMessage() {
+    private fun gererMessageInvalide() {
         Log.d("TruckerService", "Message Invalide")
         controleurLogcat.ecrireDansFichierLog("Message Invalide")
     }
