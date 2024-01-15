@@ -13,7 +13,7 @@ class AjoutNumeroAdminCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.sauvegarder(context, "ListeBlanche.json", "numero_admin",
+            jsonControleur.sauvegarderDonneesDansJSON(context, "ListeBlanche.json", "numero_admin",
                 it
             )
         }

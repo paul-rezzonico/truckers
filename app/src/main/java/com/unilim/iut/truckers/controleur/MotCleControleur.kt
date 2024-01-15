@@ -15,7 +15,7 @@ class MotCleControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJSONMotCle(contexte: Context?) {
-        jsonControleur.creationJSON(contexte, "MotsCles.json", "mots_cles")
+        jsonControleur.creationFichierJSON(contexte, "MotsCles.json", "mots_cles")
     }
 
     /**
@@ -25,7 +25,7 @@ class MotCleControleur {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementMotsCles(context: Context?): MutableList<String> {
-        val jsonObject = jsonControleur.charger(context, "MotsCles.json")
+        val jsonObject = jsonControleur.chargerDonneesDuJSON(context, "MotsCles.json")
         val motsCles = mutableListOf<String>()
 
         if (jsonObject.has("mots_cles")) {

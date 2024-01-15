@@ -17,7 +17,7 @@ class ListeBlancheControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationListeBlanche(contexte: Context?) {
-        jsonControleur.creationJSON(contexte, "ListeBlanche.json", "liste_blanche")
+        jsonControleur.creationFichierJSON(contexte, "ListeBlanche.json", "liste_blanche")
     }
 
     /**
@@ -27,7 +27,7 @@ class ListeBlancheControleur {
      * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
      */
     fun chargementJson(context: Context?): JSONObject {
-        return jsonControleur.charger(context, "ListeBlanche.json")
+        return jsonControleur.chargerDonneesDuJSON(context, "ListeBlanche.json")
     }
 
     /**

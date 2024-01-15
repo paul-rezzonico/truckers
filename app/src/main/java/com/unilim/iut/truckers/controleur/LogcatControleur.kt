@@ -1,6 +1,7 @@
 package com.unilim.iut.truckers.controleur
 
 import android.os.Environment
+import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -45,8 +46,15 @@ class LogcatControleur() {
     fun supprimerFichierLog() {
         val dossierTelechargement = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         val fichierLog = File(dossierTelechargement, nomFichierLog)
+
         if (fichierLog.exists()) {
-            fichierLog.delete()
+            val isDeleted = fichierLog.delete()
+            if (isDeleted) {
+                Log.d("TruckerService", "Le fichier de log a été supprimé : $nomFichierLog")
+            } else {
+                Log.e("TruckerService", "Échec de la suppression du fichier de log : $nomFichierLog")
+            }
         }
     }
+
 }

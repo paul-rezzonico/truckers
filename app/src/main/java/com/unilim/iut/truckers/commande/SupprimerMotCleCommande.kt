@@ -13,7 +13,7 @@ class SupprimerMotCleCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimer(
+            jsonControleur.supprimerDonneesDansJSON(
                 context, "MotsCles.json", "mots_cles",
                 it
             )

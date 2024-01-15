@@ -13,7 +13,7 @@ class AjoutMotCleCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.sauvegarder(context, "MotsCles.json", "mots_cles",
+            jsonControleur.sauvegarderDonneesDansJSON(context, "MotsCles.json", "mots_cles",
                 it
             )
         }

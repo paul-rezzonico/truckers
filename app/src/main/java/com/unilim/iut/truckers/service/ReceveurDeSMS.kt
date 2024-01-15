@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.provider.Telephony
+import android.telephony.SmsMessage
 import android.util.Log
 import com.unilim.iut.truckers.controleur.MotCleControleur
 import com.unilim.iut.truckers.controleur.MessageControleur
@@ -20,63 +21,79 @@ class ReceveurDeSMS : BroadcastReceiver() {
     private val controleurLogcat = LogcatControleur()
 
     override fun onReceive(contexte: Context?, intention: Intent?) {
-        if (intention != null) {
+        if (isSmsReceivedIntent(intention)) {
+            processReceivedSms(contexte, intention)
+        }
+    }
 
-            if (intention.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
-                val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
+    private fun isSmsReceivedIntent(intent: Intent?): Boolean {
+        return intent?.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION
+    }
 
-                for (message in messages) {
-                    Log.d("TruckerService", "--------------------------------------")
-                    controleurLogcat.ecrireDansFichierLog("--------------------------------------")
-                    val numeroEmetteur: NumeroTelephone?
-                    try {
-                        numeroEmetteur = message.originatingAddress?.let { NumeroTelephone(it) }
-                        val corpsMessage = message.messageBody
+    private fun processReceivedSms(contexte: Context?, intention: Intent?) {
+        val messages = Telephony.Sms.Intents.getMessagesFromIntent(intention)
+        for (message in messages) {
+            handleReceivedMessage(contexte, message)
+        }
+    }
 
-                        val listeBlanche = controleurListeBlanche.chargementListeBlanche(contexte, false)
-                        val numeroAdmin = controleurListeBlanche.chargementListeBlanche(contexte, true)
-
-                        if (numeroEmetteur != null) {
-                            when(numeroEmetteur.numeroTelephone) {
-                                in listeBlanche.toString() -> {
-                                    Log.d("TruckerService", "Message de la liste blanche")
-                                    controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
-
-                                    if (controleurMotCle.verificationMotsCles(contexte, corpsMessage)) {
-                                        controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
-                                    } else {
-                                        controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
-                                    }
-                                }
-
-                                in numeroAdmin.toString() -> {
-                                    Log.d("TruckerService", "Message de l'administrateur")
-                                    controleurLogcat.ecrireDansFichierLog("Message de l'administrateur")
-
-                                    if (controleurMotCle.verificationMotsClesAdmin(corpsMessage)) {
-                                        controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
-                                        controleurMessage.actionMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
-                                    } else {
-                                        controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, corpsMessage, message.timestampMillis.toString()))
-                                    }
-                                }
-
-                                else -> {
-                                    Log.d("TruckerService", "Message Invalide")
-                                    controleurLogcat.ecrireDansFichierLog("Message Invalide")
-                                }
-                            }
-
-                            controleurMessage.avoirMessagesDansBonJsonMessage(contexte)
-                            controleurMessage.avoirMessagesDansMauvaisJsonMessage(contexte)
-                        }
-                    } catch (e: Exception) {
-                        Log.d("TruckerService", e.message.toString())
-                        controleurLogcat.ecrireDansFichierLog(e.message.toString())
-                    }
-                }
+    private fun handleReceivedMessage(contexte: Context?, message: SmsMessage) {
+        val numeroEmetteur = getNumeroEmetteur(message)
+        if (numeroEmetteur != null) {
+            Log.d("TruckerService", "--------------------------------------------------")
+            when {
+                isMessageFromListeBlanche(contexte, numeroEmetteur) -> handleListeBlancheMessage(contexte, numeroEmetteur, message)
+                isMessageFromAdmin(contexte, numeroEmetteur) -> handleAdminMessage(contexte, numeroEmetteur, message)
+                else -> handleInvalidMessage()
             }
         }
     }
-}
 
+    private fun getNumeroEmetteur(message: SmsMessage): NumeroTelephone? {
+        return try {
+            message.originatingAddress?.let { NumeroTelephone(it) }
+        } catch (e: Exception) {
+            Log.d("TruckerService", e.message.toString())
+            controleurLogcat.ecrireDansFichierLog(e.message.toString())
+            null
+        }
+    }
+
+    private fun isMessageFromListeBlanche(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
+        val listeBlanche = controleurListeBlanche.chargementListeBlanche(contexte, false)
+        return numeroEmetteur.numeroTelephone in listeBlanche.toString()
+    }
+
+    private fun isMessageFromAdmin(contexte: Context?, numeroEmetteur: NumeroTelephone): Boolean {
+        val numeroAdmin = controleurListeBlanche.chargementListeBlanche(contexte, true)
+        return numeroEmetteur.numeroTelephone in numeroAdmin.toString()
+    }
+
+    private fun handleListeBlancheMessage(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
+        Log.d("TruckerService", "Message de la liste blanche")
+        controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
+
+        if (controleurMotCle.verificationMotsCles(contexte, message.messageBody)) {
+            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+        } else {
+            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+        }
+    }
+
+    private fun handleAdminMessage(contexte: Context?, numeroEmetteur: NumeroTelephone, message: SmsMessage) {
+        Log.d("TruckerService", "Message de l'administrateur")
+        controleurLogcat.ecrireDansFichierLog("Message de l'administrateur")
+
+        if (controleurMotCle.verificationMotsClesAdmin(message.messageBody)) {
+            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.actionMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+        } else {
+            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+        }
+    }
+
+    private fun handleInvalidMessage() {
+        Log.d("TruckerService", "Message Invalide")
+        controleurLogcat.ecrireDansFichierLog("Message Invalide")
+    }
+}

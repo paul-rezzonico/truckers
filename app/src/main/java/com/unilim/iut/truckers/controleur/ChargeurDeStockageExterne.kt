@@ -10,7 +10,7 @@ import java.io.File
 class ChargeurDeStockageExterne : IFacadeDePersistence {
     private val logcatControleur = LogcatControleur()
 
-    override fun sauvegarder(
+    override fun sauvegarderDonneesDansJSON(
         contexte: Context?,
         cheminFichier: String,
         champs: String,
@@ -19,7 +19,7 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
         TODO("Not needed here")
     }
 
-    override fun charger(context: Context?, cheminFichier: String): JSONObject {
+    override fun chargerDonneesDuJSON(context: Context?, cheminFichier: String): JSONObject {
         var objetJson = JSONObject()
 
         try {
@@ -41,7 +41,7 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
         return objetJson
     }
 
-    override fun supprimer(
+    override fun supprimerDonneesDansJSON(
         contexte: Context?,
         cheminFichier: String,
         champs: String,

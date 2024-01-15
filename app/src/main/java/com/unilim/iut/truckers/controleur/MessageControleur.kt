@@ -31,7 +31,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonBonMessage(contexte: Context?) {
-        controleurJson.creationJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
+        controleurJson.creationFichierJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
     }
 
     /**
@@ -42,11 +42,11 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
+        controleurJson.sauvegarderDonneesDansJSON(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
     }
 
     fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<String> {
-        val objetJson = controleurJson.charger(contexte, creationNomFichierJSON("MessageValide"))
+        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageValide"))
         val liste = mutableListOf<String>()
 
         val tableauJson = objetJson.getJSONArray("messages")
@@ -72,7 +72,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonBonMessage(contexte: Context?) {
-        controleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageValide"))
+        controleurJson.supressionFichierJSON(contexte, creationNomFichierJSON("MessageValide"))
     }
 
     /**
@@ -82,7 +82,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        controleurJson.creationJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
+        controleurJson.creationFichierJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
     }
 
     /**
@@ -93,7 +93,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarder(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
+        controleurJson.sauvegarderDonneesDansJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
     }
 
     /**
@@ -103,7 +103,7 @@ class MessageControleur {
      * @return Cette fonction retourne une liste d'objet Message.
      */
     fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<String> {
-        val objetJson = controleurJson.charger(contexte, creationNomFichierJSON("MessageInvalide"))
+        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageInvalide"))
         val liste = mutableListOf<String>()
 
         val tableauJson = objetJson.getJSONArray("messages")
@@ -129,7 +129,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun suppressionJsonMauvaisMessage(contexte: Context?) {
-        controleurJson.supressionJSON(contexte, creationNomFichierJSON("MessageInvalide"))
+        controleurJson.supressionFichierJSON(contexte, creationNomFichierJSON("MessageInvalide"))
     }
 
     /**

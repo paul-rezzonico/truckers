@@ -4,7 +4,7 @@ import android.content.Context
 
 interface IFacadeDePersistence {
 
-    fun sauvegarder(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
-    fun charger(context: Context?, cheminFichier: String) : Any
-    fun supprimer(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
+    fun sauvegarderDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
+    fun chargerDonneesDuJSON(context: Context?, cheminFichier: String) : Any
+    fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
 }

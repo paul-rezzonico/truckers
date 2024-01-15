@@ -13,7 +13,7 @@ class SupprimerNumeroListeBlancheCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimer(
+            jsonControleur.supprimerDonneesDansJSON(
                 context, "ListeBlanche.json", "liste_blanche",
                 it
             )
