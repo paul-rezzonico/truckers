@@ -78,6 +78,7 @@ class JsonControleur : IFacadeDePersistence{
     override fun sauvegarderDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
 
         val donneesSerialisees = jackson.writeValueAsString(donnees)
+        Log.d("TruckerService", donneesSerialisees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (!fichier.exists()) {

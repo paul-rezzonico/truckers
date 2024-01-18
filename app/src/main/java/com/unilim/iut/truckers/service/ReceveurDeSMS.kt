@@ -74,9 +74,9 @@ class ReceveurDeSMS : BroadcastReceiver() {
         controleurLogcat.ecrireDansFichierLog("Message de la liste blanche")
 
         if (controleurMotCle.verificationMotsCles(contexte, message.messageBody)) {
-            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur.numeroTelephone, message.messageBody, message.timestampMillis.toString()))
         } else {
-            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur.numeroTelephone, message.messageBody, message.timestampMillis.toString()))
         }
     }
 
@@ -85,10 +85,10 @@ class ReceveurDeSMS : BroadcastReceiver() {
         controleurLogcat.ecrireDansFichierLog("Message de l'administrateur")
 
         if (controleurMotCle.verificationMotsClesAdmin(message.messageBody)) {
-            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
-            controleurMessage.actionMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.ajoutMessageDansJsonBonMessage(contexte, Message(numeroEmetteur.numeroTelephone, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.actionMessage(contexte, Message(numeroEmetteur.numeroTelephone, message.messageBody, message.timestampMillis.toString()))
         } else {
-            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur, message.messageBody, message.timestampMillis.toString()))
+            controleurMessage.ajoutMessageDansMauvaisJsonMessage(contexte, Message(numeroEmetteur.numeroTelephone, message.messageBody, message.timestampMillis.toString()))
         }
     }
 

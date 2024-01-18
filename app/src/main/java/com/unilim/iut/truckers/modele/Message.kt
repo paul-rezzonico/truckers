@@ -1,10 +1,10 @@
 package com.unilim.iut.truckers.modele
 
 data class Message(
-    val numeroTelephone: NumeroTelephone,
+    val id: Int = obtenirNouvelId(),
+    val numeroTelephone: String,
     val message: String,
     val dateReception: String,
-    val id: Int = obtenirNouvelId(),
     var estSynchro: Boolean = false
 ) {
     companion object {
