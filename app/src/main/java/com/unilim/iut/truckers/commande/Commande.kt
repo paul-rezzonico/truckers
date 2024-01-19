@@ -1,7 +1,9 @@
 package com.unilim.iut.truckers.commande
 
 import android.content.Context
+import com.unilim.iut.truckers.MainActivity
 import com.unilim.iut.truckers.controleur.JsonControleur
+import com.unilim.iut.truckers.controleur.SynchronisationControleur
 
 abstract class Commande() {
 

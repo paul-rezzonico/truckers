@@ -5,6 +5,7 @@ import android.util.Log
 import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
+import com.unilim.iut.truckers.commande.ChangerIntervalleSynchronisationCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroAdminCommande
 import com.unilim.iut.truckers.commande.SupprimerMotCleCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroListeBlancheCommande
@@ -142,6 +143,7 @@ class MessageControleur {
     fun actionMessage(contexte: Context?, nouveauMessage: Message) {
         val motCleAjout = "Ajout"
         val motCleSuppression = "Suppression"
+        val motCleChangement = "Changement"
         val lignes = nouveauMessage.message.lines().drop(1)
 
         for (ligne in lignes) {
@@ -173,6 +175,8 @@ class MessageControleur {
                         controleurCommande.executerCommande(SupprimerNumeroAdminCommande(contexte, NumeroTelephone(value)))
                     }
                 }
+            } else if (action == motCleChangement) {
+                controleurCommande.executerCommande(ChangerIntervalleSynchronisationCommande(contexte, value))
             }
         }
     }

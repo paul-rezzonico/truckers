@@ -22,19 +22,21 @@ import com.unilim.iut.truckers.controleur.DefautControleur
 import com.unilim.iut.truckers.controleur.MotCleControleur
 import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.controleur.ListeBlancheControleur
+import com.unilim.iut.truckers.controleur.SynchronisationControleur
 import com.unilim.iut.truckers.service.ServiceDuReceveurDeSMS
 import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
     companion object {
         val historique: HistoriqueDeCommande = HistoriqueDeCommande()
+        val controleurSynchronisation: SynchronisationControleur = SynchronisationControleur()
     }
 
-    private val controlleurCommande = CommandeControleur()
-    private val controlleurListeBlanche = ListeBlancheControleur()
-    private val controlleurMessage = MessageControleur()
-    private val controlleurMotCles = MotCleControleur()
-    private val controlleurDefaut = DefautControleur()
+    private val controleurCommande = CommandeControleur()
+    private val controleurListeBlanche = ListeBlancheControleur()
+    private val controleurMessage = MessageControleur()
+    private val controleurMotCles = MotCleControleur()
+    private val controleurDefaut = DefautControleur()
     private val SMS_RECEIVE_PERMISSION_CODE = 123
     private val SMS_READ_PERMISSION_CODE = 124
 
@@ -102,35 +104,35 @@ class MainActivity : Activity() {
 
     private fun enqueueWorkManagerJob() {
 
-        controlleurListeBlanche.creationListeBlanche(this)
-        controlleurMessage.creationJsonMauvaisMessage(this)
-        controlleurMessage.creationJsonBonMessage(this)
-        controlleurMotCles.creationJSONMotCle(this)
+        controleurListeBlanche.creationListeBlanche(this)
+        controleurMessage.creationJsonMauvaisMessage(this)
+        controleurMessage.creationJsonBonMessage(this)
+        controleurMotCles.creationJSONMotCle(this)
         applicationContext.getSharedPreferences("sms_service_prefs", Context.MODE_PRIVATE)
             .edit()
             .putBoolean("is_receiver_registered", false)
             .apply()
 
-        if (controlleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controlleurMotCles.chargementMotsCles(this).isNotEmpty()) {
+        if (controleurListeBlanche.chargementListeBlanche(this, true).isNotEmpty() && controleurMotCles.chargementMotsCles(this).isNotEmpty()) {
             Log.d("TruckerService", "Liste blanche et mots clés déjà présents")
             val managerDeTravail = WorkManager.getInstance(this)
             val smsWorkerRequest = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
                 .build()
 
             managerDeTravail.enqueue(smsWorkerRequest)
-        } else if (controlleurDefaut.verificationDefaultJson()) {
+        } else if (controleurDefaut.verificationDefaultJson()) {
             Log.d("TruckerService", "Liste blanche et mots clés par défaut")
-            val listeMotsCles = controlleurDefaut.chargementMotsClesDefaut(this)
-            val listeBlanche = controlleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
-            val listeNumeroAdmin = controlleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
+            val listeMotsCles = controleurDefaut.chargementMotsClesDefaut(this)
+            val listeBlanche = controleurDefaut.chargementListeBlancheDefaut(this, "liste_blanche")
+            val listeNumeroAdmin = controleurDefaut.chargementListeBlancheDefaut(this, "numero_admin")
             for (numero in listeBlanche) {
-                controlleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(this, numero))
+                controleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(this, numero))
             }
             for (numeroAdmin in listeNumeroAdmin) {
-                controlleurCommande.executerCommande(AjoutNumeroAdminCommande(this, numeroAdmin))
+                controleurCommande.executerCommande(AjoutNumeroAdminCommande(this, numeroAdmin))
             }
             for (motcle in listeMotsCles) {
-                controlleurCommande.executerCommande(AjoutMotCleCommande(this, motcle))
+                controleurCommande.executerCommande(AjoutMotCleCommande(this, motcle))
             }
             val managerDeTravail = WorkManager.getInstance(this)
             val requeteDuTravailleurDeSms = PeriodicWorkRequest.Builder(ServiceDuReceveurDeSMS::class.java, 15, TimeUnit.MINUTES)
@@ -140,6 +142,7 @@ class MainActivity : Activity() {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
         }
 
+        controleurSynchronisation.miseEnPlaceSynchronisation()
         finish()
     }
 }
