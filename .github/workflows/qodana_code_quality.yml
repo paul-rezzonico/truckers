@@ -20,6 +20,6 @@ jobs:
       - name: 'Qodana Scan'
         uses: JetBrains/qodana-action@v2023.2
         with:
-          args: --linter,qodana-jvm-android:2023.2
+          args: --linter,jetbrains/qodana-jvm-android:2023.2
         env:
           QODANA_TOKEN: ${{ secrets.QODANA_TOKEN }}
