@@ -1,17 +1,21 @@
 package com.unilim.iut.truckers.modele
 
+import java.util.UUID
+
 data class Message(
-    val numeroTelephone: String,
+    val id: String? = UUID.randomUUID().toString(),
+    val envoyeur: String,
     val message: String,
     val dateReception: String,
-    val id: Int = obtenirNouvelId(),
-    var estSynchro: Boolean = false
 ) {
-    companion object {
-        private var compteurIds = 0
+    constructor(envoyeur: String, message: String, dateReception: String) : this(
+        id = UUID.randomUUID().toString(),
+        envoyeur = envoyeur,
+        message = message,
+        dateReception = dateReception
+    )
 
-        fun obtenirNouvelId(): Int {
-            return compteurIds++
-        }
+    override fun toString(): String {
+        return "{\"id\":\"$id\",\"envoyeur\":\"$envoyeur\",\"message\":\"$message\",\"dateReception\":\"$dateReception\"}"
     }
 }

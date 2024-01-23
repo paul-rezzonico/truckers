@@ -2,6 +2,8 @@ package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.util.Log
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
@@ -19,7 +21,7 @@ class MessageControleur {
 
     private val controleurJson = JsonControleur()
     private val controleurCommande = CommandeControleur()
-    private val controleurLogcat = LogcatControleur()
+    private val jackson = ObjectMapper().registerModule(KotlinModule())
 
     fun creationNomFichierJSON(prefixe: String): String {
         val dateDuJour = SimpleDateFormat("dd-M-yyyy", Locale.FRANCE).format(Date())
@@ -47,34 +49,18 @@ class MessageControleur {
         controleurJson.sauvegarderDonneesDansJSON(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
     }
 
-    fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<String> {
+    fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<Message> {
         val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageValide"))
-        val liste = mutableListOf<String>()
+        val liste = mutableListOf<Message>()
 
         val tableauJson = objetJson.getJSONArray("messages")
 
         for (i in 0 until tableauJson.length()) {
             val message = tableauJson.getString(i)
-            liste.add(message.toString())
+            liste.add(jackson.readValue(message, Message::class.java))
         }
 
-        controleurLogcat.ecrireDansFichierLog("Liste des messages dans le JSON valide :")
-        Log.d("TruckerService", "Liste des messages dans le JSON valide :")
-        for (message in liste) {
-            controleurLogcat.ecrireDansFichierLog(message)
-            Log.d("TruckerService", message)
-        }
         return liste
-    }
-
-    /**
-     * Cette fonction permet de supprimer le fichier JSON contenant une liste d'objet Message qui sont ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun suppressionJsonBonMessage(contexte: Context?) {
-        controleurJson.supressionFichierJSON(contexte, creationNomFichierJSON("MessageValide"))
     }
 
     /**
@@ -104,34 +90,18 @@ class MessageControleur {
      * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne une liste d'objet Message.
      */
-    fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<String> {
+    fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<Message> {
         val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageInvalide"))
-        val liste = mutableListOf<String>()
+        val liste = mutableListOf<Message>()
 
         val tableauJson = objetJson.getJSONArray("messages")
 
         for (i in 0 until tableauJson.length()) {
             val message = tableauJson.getString(i)
-            liste.add(message.toString())
+            liste.add(jackson.readValue(message, Message::class.java))
         }
 
-        controleurLogcat.ecrireDansFichierLog("Liste des messages dans le JSON invalide :")
-        Log.d("TruckerService", "Liste des messages dans le JSON invalide :")
-        for (message in liste) {
-            controleurLogcat.ecrireDansFichierLog(message)
-            Log.d("TruckerService", message)
-        }
         return liste
-    }
-
-    /**
-     * Cette fonction permet de supprimer le fichier JSON contenant une liste d'objet Message qui ne sont pas ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun suppressionJsonMauvaisMessage(contexte: Context?) {
-        controleurJson.supressionFichierJSON(contexte, creationNomFichierJSON("MessageInvalide"))
     }
 
     /**
@@ -151,32 +121,25 @@ class MessageControleur {
             val cle = ligne.split(" ")[1]
             val value = ligne.split(" ")[2]
 
-            if (action == motCleAjout) {
-                when (cle) {
-                    "mot-clé" -> {
-                        controleurCommande.executerCommande(AjoutMotCleCommande(contexte, value))
-                    }
-                    "numéro" -> {
-                        controleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
-                    }
-                    "administrateur" -> {
-                        controleurCommande.executerCommande(AjoutNumeroAdminCommande(contexte, NumeroTelephone(value)))
+            when (action) {
+                motCleAjout -> {
+                    when (cle) {
+                        "mot-clé" -> controleurCommande.executerCommande(AjoutMotCleCommande(contexte, value))
+                        "numéro" -> controleurCommande.executerCommande(AjoutNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
+                        "administrateur" -> controleurCommande.executerCommande(AjoutNumeroAdminCommande(contexte, NumeroTelephone(value)))
                     }
                 }
-            } else if (action == motCleSuppression) {
-                when (cle) {
-                    "mot-clé" -> {
-                        controleurCommande.executerCommande(SupprimerMotCleCommande(contexte, value))
-                    }
-                    "numéro" -> {
-                        controleurCommande.executerCommande(SupprimerNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
-                    }
-                    "administrateur" -> {
-                        controleurCommande.executerCommande(SupprimerNumeroAdminCommande(contexte, NumeroTelephone(value)))
+                motCleSuppression -> {
+                    when (cle) {
+                        "mot-clé" -> controleurCommande.executerCommande(SupprimerMotCleCommande(contexte, value))
+                        "numéro" -> controleurCommande.executerCommande(SupprimerNumeroListeBlancheCommande(contexte, NumeroTelephone(value)))
+                        "administrateur" -> controleurCommande.executerCommande(SupprimerNumeroAdminCommande(contexte, NumeroTelephone(value)))
                     }
                 }
-            } else if (action == motCleChangement) {
-                controleurCommande.executerCommande(ChangerIntervalleSynchronisationCommande(contexte, value))
+                motCleChangement -> controleurCommande.executerCommande(ChangerIntervalleSynchronisationCommande(contexte, value))
+                else -> {
+                    Log.d("TruckerService", "Action non reconnue")
+                }
             }
         }
     }

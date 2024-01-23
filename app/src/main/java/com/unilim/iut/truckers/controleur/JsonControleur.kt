@@ -163,15 +163,15 @@ class JsonControleur : IFacadeDePersistence{
     /**
      * Cette fonction permet de charger le contenu d'un fichier JSON.
      *
-     * @param context Ce paramètre est le contexte de l'application.
+     * @param contexte Ce paramètre est le contexte de l'application.
      * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
      * @return Cette fonction retourne le contenu du fichier JSON.
      */
-    override fun chargerDonneesDuJSON(context: Context?, cheminFichier: String): JSONObject {
+    override fun chargerDonneesDuJSON(contexte: Context?, cheminFichier: String): JSONObject {
         var objetJson = JSONObject()
 
         try {
-            val fluxEntree: FileInputStream? = context?.openFileInput(cheminFichier)
+            val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
             if (fluxEntree != null) {
                 val jsonStr = fluxEntree.bufferedReader().use { it.readText() }
                 objetJson = JSONObject(jsonStr)

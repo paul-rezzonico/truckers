@@ -2,8 +2,9 @@ package com.unilim.iut.truckers.commande
 
 import android.content.Context
 import android.util.Log
-import com.unilim.iut.truckers.MainActivity
 import com.unilim.iut.truckers.controleur.LogcatControleur
+import com.unilim.iut.truckers.controleur.SynchronisationControleur
+import org.koin.java.KoinJavaComponent.inject
 
 class ChangerIntervalleSynchronisationCommande (
     override var context: Context?,
@@ -11,12 +12,13 @@ class ChangerIntervalleSynchronisationCommande (
 ) : Commande() {
 
     private val logcatControleur = LogcatControleur()
+    private val synchronisationControleur: SynchronisationControleur by inject(SynchronisationControleur::class.java)
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            MainActivity.controleurSynchronisation.changerIntervalle(it.toString().toLong())
-            MainActivity.controleurSynchronisation.arreterSynchronisation()
-            MainActivity.controleurSynchronisation.miseEnPlaceSynchronisation()
+            synchronisationControleur.changerIntervalle(it.toString().toLong())
+            synchronisationControleur.arreterSynchronisation()
+            synchronisationControleur.miseEnPlaceSynchronisation()
             true
         } ?: false
 

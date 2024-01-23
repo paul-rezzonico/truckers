@@ -24,12 +24,15 @@ import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.controleur.ListeBlancheControleur
 import com.unilim.iut.truckers.controleur.SynchronisationControleur
 import com.unilim.iut.truckers.service.ServiceDuReceveurDeSMS
+import com.unilim.iut.truckers.utile.syncModule
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
     companion object {
         val historique: HistoriqueDeCommande = HistoriqueDeCommande()
-        val controleurSynchronisation: SynchronisationControleur = SynchronisationControleur()
     }
 
     private val controleurCommande = CommandeControleur()
@@ -42,6 +45,11 @@ class MainActivity : Activity() {
 
     override fun onCreate(instanceEtatSauvegardee: Bundle?) {
         super.onCreate(instanceEtatSauvegardee)
+
+        startKoin {
+            androidContext(this@MainActivity)
+            modules(syncModule)
+        }
 
         requestPermissions()
     }
@@ -67,6 +75,9 @@ class MainActivity : Activity() {
         }
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_SMS), SMS_READ_PERMISSION_CODE)
+        }
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_PHONE_STATE), SMS_READ_PERMISSION_CODE)
         }
     }
 
@@ -99,7 +110,8 @@ class MainActivity : Activity() {
 
     private fun areAllPermissionsGranted(): Boolean {
         return ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun enqueueWorkManagerJob() {
@@ -142,7 +154,8 @@ class MainActivity : Activity() {
             Log.d("TruckerService", "Le fichier JSON par défaut n'existe pas")
         }
 
-        controleurSynchronisation.miseEnPlaceSynchronisation()
+        val synchronisationControleur: SynchronisationControleur by inject()
+        synchronisationControleur.miseEnPlaceSynchronisation()
         finish()
     }
 }
