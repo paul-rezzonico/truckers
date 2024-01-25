@@ -15,7 +15,9 @@ class ApiManager {
     fun envoyerMessages(messageEnvelope: MessageEnvelope, cheminURL: String) {
 
         val json = Gson().toJson(messageEnvelope)
+        Log.d("TruckerService", json)
         val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+        Log.d("TruckerService", "Envoi de ${ApiConfig.buildApiUrl(cheminURL)}")
         val request = Request.Builder()
             .url(ApiConfig.buildApiUrl(cheminURL))
             .post(requestBody)
@@ -27,7 +29,6 @@ class ApiManager {
             if (!response.isSuccessful) {
                 val responseBody = response.body?.string() ?: "Pas de réponse"
                 Log.d("TruckerService", "Erreur $cheminURL : $responseBody")
-                envoyerMessages(messageEnvelope, cheminURL)
             }
         } catch (e: Exception) {
             e.printStackTrace()

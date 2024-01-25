@@ -172,9 +172,11 @@ class JsonControleur : IFacadeDePersistence{
 
         try {
             val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
-            if (fluxEntree != null) {
+            if (fluxEntree != null && File(contexte.filesDir, cheminFichier).exists()) {
                 val jsonStr = fluxEntree.bufferedReader().use { it.readText() }
                 objetJson = JSONObject(jsonStr)
+            } else {
+                Log.d("TruckerService", "Le fichier JSON n'existe pas : $cheminFichier")
             }
         } catch (e: LectureListeBlancheException) {
             Log.d("TruckerService", e.message)

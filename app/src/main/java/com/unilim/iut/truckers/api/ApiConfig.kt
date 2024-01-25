@@ -1,6 +1,7 @@
 package com.unilim.iut.truckers.api
 
 import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 
 object ApiConfig {
 
@@ -11,9 +12,7 @@ object ApiConfig {
         .build()
 
     fun buildApiUrl(path: String): HttpUrl {
-        return BASE_URL.newBuilder()
-            .addPathSegment(path)
-            .build()
+        return (BASE_URL.toString() + path).toHttpUrlOrNull() ?: throw Exception("Impossible de construire l'URL")
     }
 }
 

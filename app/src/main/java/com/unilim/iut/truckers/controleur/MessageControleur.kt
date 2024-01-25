@@ -53,6 +53,11 @@ class MessageControleur {
         val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageValide"))
         val liste = mutableListOf<Message>()
 
+        if (objetJson.toString() == "{}") {
+            Log.d("TruckerService", "Il n'y a pas de messages valides")
+            return liste
+        }
+
         val tableauJson = objetJson.getJSONArray("messages")
 
         for (i in 0 until tableauJson.length()) {
@@ -93,6 +98,11 @@ class MessageControleur {
     fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<Message> {
         val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageInvalide"))
         val liste = mutableListOf<Message>()
+
+        if (objetJson.toString() == "{}") {
+            Log.d("TruckerService", "Il n'y a pas de messages invalides")
+            return liste
+        }
 
         val tableauJson = objetJson.getJSONArray("messages")
 
