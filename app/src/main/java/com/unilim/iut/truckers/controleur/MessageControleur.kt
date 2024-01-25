@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.google.gson.Gson
+import com.unilim.iut.truckers.api.ApiManager
 import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
@@ -54,7 +56,6 @@ class MessageControleur {
         val liste = mutableListOf<Message>()
 
         if (objetJson.toString() == "{}") {
-            Log.d("TruckerService", "Il n'y a pas de messages valides")
             return liste
         }
 
@@ -100,7 +101,6 @@ class MessageControleur {
         val liste = mutableListOf<Message>()
 
         if (objetJson.toString() == "{}") {
-            Log.d("TruckerService", "Il n'y a pas de messages invalides")
             return liste
         }
 
@@ -150,6 +150,29 @@ class MessageControleur {
                 else -> {
                     Log.d("TruckerService", "Action non reconnue")
                 }
+            }
+        }
+    }
+
+    /**
+     * Cette fonction permet de supprimer un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
+     *
+     * @param messages Ce paramètre est la liste d'objet Message à supprimer dans le fichier JSON.
+     */
+    fun supprimerMessagesApresApi(contexte: Context, androidId: String, messages: List<Message>) {
+        val messagesApiValides = ApiManager(contexte).recevoirMessages("messages/${androidId}")
+        val messagesApiInvalides = ApiManager(contexte).recevoirMessages("messages_err/${androidId}")
+
+        val jsonMessagesApiValides = Gson().toJson(messagesApiValides)
+        val jsonMessagesApiInvalides = Gson().toJson(messagesApiInvalides)
+
+        for (message in messages) {
+            if (jsonMessagesApiValides.contains(message.id)) {
+                controleurJson.supprimerDonneesDansJSON(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
+                Log.d("TruckerService", "Suppression d'un message dans le JSON Valide: $message")
+            } else if (jsonMessagesApiInvalides.contains(message.id)) {
+                controleurJson.supprimerDonneesDansJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
+                Log.d("TruckerService", "Suppression d'un message dans le JSON Invalide: $message")
             }
         }
     }

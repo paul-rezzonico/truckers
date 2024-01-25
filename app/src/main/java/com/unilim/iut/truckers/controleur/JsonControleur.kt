@@ -147,15 +147,12 @@ class JsonControleur : IFacadeDePersistence{
 
         if (champs != "numero_admin" && liste != null) {
             supprimerDonneesTableauJSON(liste, donneesSerialisees)
-        } else if (liste?.length()!! > 1) {
-            supprimerDonneesTableauJSON(liste, donneesSerialisees)
         } else {
             return false
         }
 
         json.put(champs, liste)
-        Log.d("TruckerService", json.toString(4))
-        AjouterDonneesJSONDansFichier(contexte, cheminFichier, json)
+        AjouterDonneesJSONListeBlancheDansFichier(contexte, cheminFichier, json)
 
         return true
     }
@@ -194,7 +191,7 @@ class JsonControleur : IFacadeDePersistence{
         }
     }
 
-    private fun AjouterDonneesJSONDansFichier(contexte: Context?, cheminFichier: String, json: JSONObject?) {
+    private fun AjouterDonneesJSONListeBlancheDansFichier(contexte: Context?, cheminFichier: String, json: JSONObject?) {
         try {
             val fluxSortie: FileOutputStream? =
                 contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
@@ -205,5 +202,9 @@ class JsonControleur : IFacadeDePersistence{
             Log.d("TruckerService", e.message)
             logcatControleur.ecrireDansFichierLog(e.message)
         }
+    }
+
+    override fun supprimerMessagesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
+        TODO("Not yet implemented")
     }
 }

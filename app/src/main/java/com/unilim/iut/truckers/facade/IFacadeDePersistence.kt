@@ -7,4 +7,6 @@ interface IFacadeDePersistence {
     fun sauvegarderDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
     fun chargerDonneesDuJSON(contexte: Context?, cheminFichier: String) : Any
     fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
+
+    fun supprimerMessagesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
 }

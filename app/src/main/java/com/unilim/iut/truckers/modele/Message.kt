@@ -3,7 +3,7 @@ package com.unilim.iut.truckers.modele
 import java.util.UUID
 
 data class Message(
-    val id: String? = UUID.randomUUID().toString(),
+    val id: String = UUID.randomUUID().toString(),
     val envoyeur: String,
     val message: String,
     val dateReception: String,

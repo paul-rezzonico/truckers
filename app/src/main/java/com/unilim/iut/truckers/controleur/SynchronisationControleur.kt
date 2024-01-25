@@ -26,8 +26,8 @@ class SynchronisationControleur(contexte: Context) {
         val listeMessageInvalide = messageControleur.avoirMessagesDansMauvaisJsonMessage(contexte)
         val messageEnvelopeValide = MessageEnvelope(androidId, listeMessageValide)
         val messageEnvelopeInvalide = MessageEnvelope(androidId, listeMessageInvalide)
-        ApiManager().envoyerMessages(messageEnvelopeValide, "messages/sync")
-        ApiManager().envoyerMessages(messageEnvelopeInvalide, "messages_err/sync")
+        ApiManager(contexte).envoyerMessages(messageEnvelopeValide, "messages/sync")
+        ApiManager(contexte).envoyerMessages(messageEnvelopeInvalide, "messages_err/sync")
     }
 
     fun changerIntervalle(intervalle: Long): Boolean {
