@@ -6,14 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.google.gson.Gson
 import com.unilim.iut.truckers.api.ApiManager
-import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
-import com.unilim.iut.truckers.commande.AjoutMotCleCommande
-import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
-import com.unilim.iut.truckers.commande.ChangerIntervalleSynchronisationCommande
-import com.unilim.iut.truckers.commande.SupprimerMessageCommande
-import com.unilim.iut.truckers.commande.SupprimerNumeroAdminCommande
-import com.unilim.iut.truckers.commande.SupprimerMotCleCommande
-import com.unilim.iut.truckers.commande.SupprimerNumeroListeBlancheCommande
+import com.unilim.iut.truckers.commande.*
 import com.unilim.iut.truckers.modele.JsonData
 import com.unilim.iut.truckers.modele.Message
 import com.unilim.iut.truckers.modele.NumeroTelephone
@@ -27,105 +20,66 @@ class MessageControleur {
     private val controleurCommande = CommandeControleur()
     private val jackson = ObjectMapper().registerModule(KotlinModule())
 
-    fun creationNomFichierJSON(prefixe: String): String {
+    private val motCleAjout = "Ajout"
+    private val motCleSuppression = "Suppression"
+    private val motCleChangement = "Changement"
+
+    private fun creationNomFichierJSON(prefixe: String): String {
         val dateDuJour = SimpleDateFormat("dd-M-yyyy", Locale.FRANCE).format(Date())
         return prefixe + "_" + "$dateDuJour.json"
     }
 
-    /**
-     * Cette fonction permet de créer un fichier JSON contenant une liste d'objet Message.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun creationJsonBonMessage(contexte: Context?) {
-        controleurJson.creationFichierJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), "messages", null, null))
+    private fun creationJsonMessage(contexte: Context?, prefixe: String) {
+        controleurJson.creationFichierJSON(JsonData(contexte, creationNomFichierJSON(prefixe), "messages", null, null))
     }
 
-    /**
-     * Cette fonction permet d'ajouter un message dans le fichier JSON contenant une liste d'objet Message qui sont ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param message Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarderDonneesDansJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), "messages", message, null))
+    private fun ajoutMessageDansJsonMessage(contexte: Context?, prefixe: String, message: Message) {
+        controleurJson.sauvegarderDonneesDansJSON(JsonData(contexte, creationNomFichierJSON(prefixe), "messages", message, null))
+    }
+
+    private fun avoirMessagesDansJsonMessage(contexte: Context?, prefixe: String): MutableList<Message> {
+        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, creationNomFichierJSON(prefixe), null, null, null))
+        val liste = mutableListOf<Message>()
+
+        if (objetJson.toString() == "{}") {
+            return liste
+        }
+
+        val tableauJson = objetJson.getJSONArray("messages")
+
+        for (i in 0 until tableauJson.length()) {
+            val message = tableauJson.getString(i)
+            liste.add(jackson.readValue(message, Message::class.java))
+        }
+
+        return liste
+    }
+
+    fun creationJsonBonMessage(contexte: Context?) {
+        creationJsonMessage(contexte, "MessageValide")
+    }
+
+    fun ajoutMessageDansBonMessage(contexte: Context?, message: Message) {
+        ajoutMessageDansJsonMessage(contexte, "MessageValide", message)
     }
 
     fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<Message> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), null, null, null))
-        val liste = mutableListOf<Message>()
-
-        if (objetJson.toString() == "{}") {
-            return liste
-        }
-
-        val tableauJson = objetJson.getJSONArray("messages")
-
-        for (i in 0 until tableauJson.length()) {
-            val message = tableauJson.getString(i)
-            liste.add(jackson.readValue(message, Message::class.java))
-        }
-
-        return liste
+        return avoirMessagesDansJsonMessage(contexte, "MessageValide")
     }
 
-    /**
-     * Cette fonction permet de créer un fichier JSON contenant une liste d'objet Message qui ne sont pas ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction ne retourne rien.
-     */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        controleurJson.creationFichierJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), "messages", null, null))
+        creationJsonMessage(contexte, "MessageInvalide")
     }
 
-    /**
-     * Cette fonction permet d'ajouter un message dans le fichier JSON contenant une liste d'objet Message qui ne sont pas ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param message Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
-     * @return Cette fonction ne retourne rien.
-     */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarderDonneesDansJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message, null))
+        ajoutMessageDansJsonMessage(contexte, "MessageInvalide", message)
     }
 
-    /**
-     * Cette fonction permet de charger une liste d'objet Message qui sont ceux recherchés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction retourne une liste d'objet Message.
-     */
     fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<Message> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), null, null, null))
-        val liste = mutableListOf<Message>()
-
-        if (objetJson.toString() == "{}") {
-            return liste
-        }
-
-        val tableauJson = objetJson.getJSONArray("messages")
-
-        for (i in 0 until tableauJson.length()) {
-            val message = tableauJson.getString(i)
-            liste.add(jackson.readValue(message, Message::class.java))
-        }
-
-        return liste
+        return avoirMessagesDansJsonMessage(contexte, "MessageInvalide")
     }
 
-    /**
-     * Cette fonction permet de mettre en place une commande en fonction du message de l'admin
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction retourne une liste d'objet Message.
-     */
     fun actionMessage(contexte: Context?, nouveauMessage: Message) {
-        val motCleAjout = "Ajout"
-        val motCleSuppression = "Suppression"
-        val motCleChangement = "Changement"
         val lignes = nouveauMessage.message.lines().drop(1)
 
         for (ligne in lignes) {
@@ -156,11 +110,6 @@ class MessageControleur {
         }
     }
 
-    /**
-     * Cette fonction permet de supprimer un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
-     *
-     * @param messages Ce paramètre est la liste d'objet Message à supprimer dans le fichier JSON.
-     */
     fun supprimerMessagesApresApi(
         contexte: Context,
         androidId: String,
