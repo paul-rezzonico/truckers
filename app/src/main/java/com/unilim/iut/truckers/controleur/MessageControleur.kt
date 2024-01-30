@@ -10,11 +10,13 @@ import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
 import com.unilim.iut.truckers.commande.ChangerIntervalleSynchronisationCommande
+import com.unilim.iut.truckers.commande.SupprimerMessageCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroAdminCommande
 import com.unilim.iut.truckers.commande.SupprimerMotCleCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroListeBlancheCommande
 import com.unilim.iut.truckers.modele.Message
 import com.unilim.iut.truckers.modele.NumeroTelephone
+import okhttp3.ResponseBody
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -159,7 +161,12 @@ class MessageControleur {
      *
      * @param messages Ce paramètre est la liste d'objet Message à supprimer dans le fichier JSON.
      */
-    fun supprimerMessagesApresApi(contexte: Context, androidId: String, messages: List<Message>) {
+    fun supprimerMessagesApresApi(
+        contexte: Context,
+        androidId: String,
+        messages: List<Message>,
+        nombreMessageEnregistre: Int
+    ) {
         val messagesApiValides = ApiManager(contexte).recevoirMessages("messages/${androidId}")
         val messagesApiInvalides = ApiManager(contexte).recevoirMessages("messages_err/${androidId}")
 
@@ -168,11 +175,9 @@ class MessageControleur {
 
         for (message in messages) {
             if (jsonMessagesApiValides.contains(message.id)) {
-                controleurJson.supprimerDonneesDansJSON(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
-                Log.d("TruckerService", "Suppression d'un message dans le JSON Valide: $message")
+                controleurCommande.executerCommande(SupprimerMessageCommande(contexte, message, creationNomFichierJSON("MessageValide"), nombreMessageEnregistre))
             } else if (jsonMessagesApiInvalides.contains(message.id)) {
-                controleurJson.supprimerDonneesDansJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
-                Log.d("TruckerService", "Suppression d'un message dans le JSON Invalide: $message")
+                controleurCommande.executerCommande(SupprimerMessageCommande(contexte, message, creationNomFichierJSON("MessageInvalide"), nombreMessageEnregistre))
             }
         }
     }

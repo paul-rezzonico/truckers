@@ -10,12 +10,12 @@ class SupprimerNumeroAdminCommande(
 ) : Commande() {
 
     private val logcatControleur = LogcatControleur()
+    private val PAS_DE_MESSAGE_ENREGISTRE = -1
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
             jsonControleur.supprimerDonneesDansJSON(
-                context, "ListeBlanche.json", "numero_admin",
-                it
+                context, "ListeBlanche.json", "numero_admin", it, PAS_DE_MESSAGE_ENREGISTRE
             )
         }
         if (effectue == false) {

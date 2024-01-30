@@ -10,12 +10,12 @@ class SupprimerMotCleCommande(
 ) : Commande() {
 
     private val logcatControleur = LogcatControleur()
+    private val PAS_DE_MESSAGE_ENREGISTRE = -1
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
             jsonControleur.supprimerDonneesDansJSON(
-                context, "MotsCles.json", "mots_cles",
-                it
+                context, "MotsCles.json", "mots_cles", it, PAS_DE_MESSAGE_ENREGISTRE
             )
         }
 

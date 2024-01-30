@@ -29,7 +29,7 @@ class JsonControleur : IFacadeDePersistence{
         logcatControleur.ecrireDansFichierLog("Création du fichier JSON : $cheminFichier")
 
         val objetJson = JSONObject()
-        objetJson.put(champs, null)
+        objetJson.put(champs, JSONArray())
 
         try {
             val fluxSortie: FileOutputStream? =
@@ -129,7 +129,7 @@ class JsonControleur : IFacadeDePersistence{
      * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    override fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
+    override fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any, nombreMessageEnregistre: Int): Boolean {
         val donneesSerialisees = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
@@ -146,7 +146,7 @@ class JsonControleur : IFacadeDePersistence{
         }
 
         if (champs != "numero_admin" && liste != null) {
-            supprimerDonneesTableauJSON(liste, donneesSerialisees)
+            supprimerDonneesTableauJSON(liste, donneesSerialisees, nombreMessageEnregistre)
         } else {
             return false
         }
@@ -183,10 +183,17 @@ class JsonControleur : IFacadeDePersistence{
         return objetJson
     }
 
-    private fun supprimerDonneesTableauJSON(liste: JSONArray, donneesSerialisees: String) {
-        for (i in 0 until liste.length()) {
-            if (liste.getString(i) == donneesSerialisees) {
-                liste.remove(i)
+    private fun supprimerDonneesTableauJSON(liste: JSONArray, donneesSerialisees: String, nombreMessageEnregistre: Int) {
+        if (nombreMessageEnregistre == -1) {
+            for (i in 0 until liste.length()) {
+                if (liste.getString(i) == donneesSerialisees) {
+                    liste.remove(i)
+                    break
+                }
+            }
+        } else {
+            for (i in 0 until nombreMessageEnregistre) {
+                liste.remove(0)
             }
         }
     }

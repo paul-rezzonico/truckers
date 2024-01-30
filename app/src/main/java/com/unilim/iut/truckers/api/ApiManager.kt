@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.unilim.iut.truckers.controleur.MessageControleur
 import com.unilim.iut.truckers.modele.MessageEnvelope
-import kotlinx.coroutines.awaitAll
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,7 +17,7 @@ class ApiManager(
     private val client = OkHttpClient()
     private val messageControleur = MessageControleur()
 
-    fun envoyerMessages(messageEnvelope: MessageEnvelope, cheminURL: String) {
+    fun envoyerMessages(messageEnvelope: MessageEnvelope, cheminURL: String, nombreMessageEnvoye: Int) {
 
         val json = Gson().toJson(messageEnvelope)
         val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
@@ -32,10 +31,20 @@ class ApiManager(
             if (!response.isSuccessful) {
                 val responseBody = response.body?.string() ?: "Pas de réponse"
                 Log.d("TruckerService", "Erreur $cheminURL : $responseBody")
-                envoyerMessages(messageEnvelope, cheminURL)
+                envoyerMessages(messageEnvelope, cheminURL, nombreMessageEnvoye)
             } else {
-                Log.d("TruckerService", "Envoi de ${ApiConfig.buildApiUrl(cheminURL)} réussie : ${response.code}")
-                messageControleur.supprimerMessagesApresApi(contexte, messageEnvelope.idTelephone, messageEnvelope.messages)
+                Log.d(
+                    "TruckerService",
+                    "Envoi : ${ApiConfig.buildApiUrl(cheminURL)} réussie : ${response.code}"
+                )
+                val nombreMessageEnregistre = response.body?.string()?.toInt() ?: 0
+                if (nombreMessageEnvoye == nombreMessageEnregistre) {
+                    messageControleur.supprimerMessagesApresApi(contexte, messageEnvelope.idTelephone, messageEnvelope.messages, nombreMessageEnregistre)
+                } else {
+                    Log.d("TruckerService", "Erreur : $nombreMessageEnvoye != $nombreMessageEnregistre")
+                    Log.d("TruckerService", "Renvoi des messages")
+                    envoyerMessages(messageEnvelope, cheminURL, nombreMessageEnregistre)
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()

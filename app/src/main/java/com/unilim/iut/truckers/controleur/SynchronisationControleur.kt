@@ -20,14 +20,17 @@ class SynchronisationControleur(contexte: Context) {
 
     private val tache = Runnable {
         Log.d("TruckerService", "--------------------SYNC-----------------------")
+        Log.d("TruckerService", "ID Android: $androidId")
         LogcatControleur().ecrireDansFichierLog("--------------------SYNC-----------------------")
+        LogcatControleur().ecrireDansFichierLog("ID Android: $androidId")
         val messageControleur = MessageControleur()
         val listeMessageValide = messageControleur.avoirMessagesDansBonJsonMessage(contexte)
         val listeMessageInvalide = messageControleur.avoirMessagesDansMauvaisJsonMessage(contexte)
         val messageEnvelopeValide = MessageEnvelope(androidId, listeMessageValide)
         val messageEnvelopeInvalide = MessageEnvelope(androidId, listeMessageInvalide)
-        ApiManager(contexte).envoyerMessages(messageEnvelopeValide, "messages/sync")
-        ApiManager(contexte).envoyerMessages(messageEnvelopeInvalide, "messages_err/sync")
+
+        ApiManager(contexte).envoyerMessages(messageEnvelopeValide, "messages/sync", listeMessageValide.size)
+        ApiManager(contexte).envoyerMessages(messageEnvelopeInvalide, "messages_err/sync", listeMessageInvalide.size)
     }
 
     fun changerIntervalle(intervalle: Long): Boolean {

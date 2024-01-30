@@ -116,6 +116,7 @@ class MainActivity : Activity() {
 
     private fun enqueueWorkManagerJob() {
 
+        Log.d("TruckerService", "-----------------Démarrage du service----------------")
         controleurListeBlanche.creationListeBlanche(this)
         controleurMessage.creationJsonMauvaisMessage(this)
         controleurMessage.creationJsonBonMessage(this)
