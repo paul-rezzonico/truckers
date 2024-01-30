@@ -16,7 +16,7 @@ class SupprimerMessageCommande (
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimerDonneesDansJSON(JsonData(context, cheminFichier, "liste_blanche", it, nombreMessageEnregistre))
+            jsonControleur.supprimerDonneesDansJSON(JsonData(context, cheminFichier, "messages", it, nombreMessageEnregistre))
         }
         if (effectue == false) {
             Log.d("TruckerService", "Suppression d'un message dans le fichier $cheminFichier impossible: $donnee")

@@ -15,7 +15,7 @@ class AjoutMotCleCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "ListeBlanche.json", "liste_blanche", it, PAS_DE_MESSAGE_ENREGISTRE))
+            jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "MotsCles.json", "mots_cles", it, PAS_DE_MESSAGE_ENREGISTRE))
         }
         if (effectue == false) {
             Log.d("TruckerService", "Ajout d'un mot clé impossible car déjà présent: $donnee")

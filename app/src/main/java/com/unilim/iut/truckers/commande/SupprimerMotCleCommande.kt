@@ -15,7 +15,7 @@ class SupprimerMotCleCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimerDonneesDansJSON(JsonData(context, "ListeBlanche.json", "liste_blanche", it, PAS_DE_MESSAGE_ENREGISTRE))
+            jsonControleur.supprimerDonneesDansJSON(JsonData(context, "MotsCles.json", "mots_cles", it, PAS_DE_MESSAGE_ENREGISTRE))
         }
 
         if (effectue == false) {

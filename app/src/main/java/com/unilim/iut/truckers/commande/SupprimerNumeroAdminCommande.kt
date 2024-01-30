@@ -15,7 +15,7 @@ class SupprimerNumeroAdminCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimerDonneesDansJSON(JsonData(context, "ListeBlanche.json", "liste_blanche", it, PAS_DE_MESSAGE_ENREGISTRE))
+            jsonControleur.supprimerDonneesDansJSON(JsonData(context, "ListeBlanche.json", "numero_admin", it, PAS_DE_MESSAGE_ENREGISTRE))
         }
         if (effectue == false) {
             Log.d("TruckerService", "Suppression d'un numéro admin dans la liste blanche impossible: $donnee")

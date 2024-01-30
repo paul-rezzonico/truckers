@@ -15,7 +15,7 @@ class AjoutNumeroAdminCommande(
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "ListeBlanche.json", "liste_blanche", it, PAS_DE_MESSAGE_ENREGISTRE))
+            jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "ListeBlanche.json", "numero_admin", it, PAS_DE_MESSAGE_ENREGISTRE))
         }
         if (effectue == false) {
             Log.d("TruckerService", "Ajout d'un numéro admin dans la liste blanche impossible car déjà présent: $donnee")
