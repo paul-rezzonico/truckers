@@ -50,7 +50,7 @@ class JsonControleur : IFacadeDePersistence{
      * @param contexte Ce paramètre est le contexte de l'application.
      * @return Cette fonction ne retourne rien.
      */
-    fun supressionFichierJSON(contexte: Context?, cheminFichier: String): Boolean {
+    fun suppressionFichierJSON(contexte: Context?, cheminFichier: String): Boolean {
         val fichier = File(contexte?.filesDir, cheminFichier)
         if (fichier.exists()) {
             val isDeleted = fichier.delete()
@@ -129,7 +129,13 @@ class JsonControleur : IFacadeDePersistence{
      * @param champs Ce paramètre est le nom de l'objet JSON.
      * @return Cette fonction ne retourne rien.
      */
-    override fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any, nombreMessageEnregistre: Int): Boolean {
+    override fun supprimerDonneesDansJSON(
+        contexte: Context?,
+        cheminFichier: String,
+        champs: String,
+        donnees: Any,
+        nombreMessageEnregistre: Int
+    ): Boolean {
         val donneesSerialisees = jackson.writeValueAsString(donnees)
 
         val fichier = File(contexte?.filesDir, cheminFichier)
@@ -139,7 +145,7 @@ class JsonControleur : IFacadeDePersistence{
         }
 
         val json = chargerDonneesDuJSON(contexte, cheminFichier)
-        val liste : JSONArray? = if (json.toString() == "{}") {
+        val liste: JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
             json.getJSONArray(champs)
@@ -147,15 +153,14 @@ class JsonControleur : IFacadeDePersistence{
 
         if (champs != "numero_admin" && liste != null) {
             supprimerDonneesTableauJSON(liste, donneesSerialisees, nombreMessageEnregistre)
-        } else {
-            return false
+            json.put(champs, liste)
+            AjouterDonneesJSONListeBlancheDansFichier(contexte, cheminFichier, json)
+            return true
         }
 
-        json.put(champs, liste)
-        AjouterDonneesJSONListeBlancheDansFichier(contexte, cheminFichier, json)
-
-        return true
+        return false
     }
+
 
     /**
      * Cette fonction permet de charger le contenu d'un fichier JSON.
@@ -185,16 +190,24 @@ class JsonControleur : IFacadeDePersistence{
 
     private fun supprimerDonneesTableauJSON(liste: JSONArray, donneesSerialisees: String, nombreMessageEnregistre: Int) {
         if (nombreMessageEnregistre == -1) {
-            for (i in 0 until liste.length()) {
-                if (liste.getString(i) == donneesSerialisees) {
-                    liste.remove(i)
-                    break
-                }
-            }
+            supprimerDonneeUnique(liste, donneesSerialisees)
         } else {
-            for (i in 0 until nombreMessageEnregistre) {
-                liste.remove(0)
+            supprimerMessages(liste, nombreMessageEnregistre)
+        }
+    }
+
+    private fun supprimerDonneeUnique(liste: JSONArray, donneesSerialisees: String) {
+        for (i in 0 until liste.length()) {
+            if (liste.getString(i) == donneesSerialisees) {
+                liste.remove(i)
+                break
             }
+        }
+    }
+
+    private fun supprimerMessages(liste: JSONArray, nombreMessageEnregistre: Int) {
+        for (i in 0 until nombreMessageEnregistre) {
+            liste.remove(0)
         }
     }
 
@@ -209,9 +222,5 @@ class JsonControleur : IFacadeDePersistence{
             Log.d("TruckerService", e.message)
             logcatControleur.ecrireDansFichierLog(e.message)
         }
-    }
-
-    override fun supprimerMessagesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
-        TODO("Not yet implemented")
     }
 }

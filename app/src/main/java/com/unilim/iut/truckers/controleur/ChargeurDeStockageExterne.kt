@@ -50,13 +50,4 @@ class ChargeurDeStockageExterne : IFacadeDePersistence {
     ): Boolean {
         TODO("Not yet implemented")
     }
-
-    override fun supprimerMessagesDansJSON(
-        contexte: Context?,
-        cheminFichier: String,
-        champs: String,
-        donnees: Any
-    ): Boolean {
-        TODO("Not yet implemented")
-    }
 }
