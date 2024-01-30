@@ -36,80 +36,56 @@ class JsonControleurTest {
 
     @Test
     fun devraitEcrireDansUnFichierJson() {
-        val champs = "testField"
-        val initialJsonContent = "{\"$champs\":[]}"
-        createFileInFilesDir(context, "test.json", initialJsonContent)
+        operationFichierJson("testField", "[]") { jsonControleur.sauvegarderDonneesDansJSON(it) }
 
-        val result = jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "test.json", champs, "newTestValue", null))
-        val file = File(context.filesDir, "test.json")
-
-        assertTrue(result)
-        assertTrue(file.exists())
     }
 
     @Test
     fun neDevraitPasEcrireDansUnFichierJsonSiIlNExistePasMaisLeCreer() {
-        val champs = "testField"
-
-        val result = jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "test.json", champs, "newTestValue", null))
-        val file = File(context.filesDir, "test.json")
-
-        assertTrue(!result)
-        assertTrue(file.exists())
-    }
-
-    @Test
-    fun devraitChargerUnFichierJson() {
-        val champs = "testField"
-        val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
-        createFileInFilesDir(context, "test.json", initialJsonContent)
-
-        val result = jsonControleur.chargerDonneesDuJSON(JsonData(context, "test.json", champs, null, null))
-
-        assertTrue(result.getString(champs) == "[\"testValue\"]")
+        operationFichierJson("testField", "[]") { jsonControleur.sauvegarderDonneesDansJSON(it) }
     }
 
     @Test
     fun devraitSupprimerUnFichierJson() {
-        val champs = "testField"
-        val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
-        createFileInFilesDir(context, "test.json", initialJsonContent)
-
-        val result = jsonControleur.suppressionFichierJSON(JsonData(context, "test.json", champs, null, null))
-        val file = File(context.filesDir, "test.json")
-
-        assertTrue(result)
-        assertFalse(file.exists())
+        operationFichierJson("testField", "[\"testValue\"]") { jsonControleur.suppressionFichierJSON(it) }
     }
 
     @Test
     fun neDevraitPasSupprimerUnFichierJsonSiIlNExistePas() {
-        val result = jsonControleur.suppressionFichierJSON(JsonData(context, "test.json", null, null, null))
-        val file = File(context.filesDir, "test.json")
-
-        assertTrue(!result)
-        assertFalse(file.exists())
+        operationFichierJson(null, null) { jsonControleur.suppressionFichierJSON(it) }
     }
 
     @Test
     fun devraitSupprimerUnChampDansUnFichierJson() {
-        val champs = "testField"
-        val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
-        createFileInFilesDir(context, "test.json", initialJsonContent)
-
-        val result = jsonControleur.supprimerDonneesDansJSON(JsonData(context, "test.json", champs, "testValue", null))
-        val file = File(context.filesDir, "test.json")
-
-        assertTrue(result)
-        assertTrue(file.exists())
+        operationFichierJson("testField", "[\"testValue\"]") { jsonControleur.supprimerDonneesDansJSON(it) }
     }
 
-    private fun createFileInFilesDir(context: Context, fileName: String, fileContent: String) {
-        val file = File(context.filesDir, fileName)
+    private fun operationFichierJson(
+        champs: String?,
+        valeur: String?,
+        operation: (JsonData) -> Boolean
+    ) {
+        if (champs != null && valeur != null) {
+            creeFichierDansDossier(context, "test.json", "{\"$champs\":$valeur}")
+        }
+
+        val resultat = operation(JsonData(context, "test.json", champs, null, null))
+        val fichier = File(context.filesDir, "test.json")
+
+        assertTrue(resultat)
+        if (champs != null) {
+            assertFalse(fichier.exists())
+        } else {
+            assertTrue(fichier.exists())
+        }
+    }
+
+    private fun creeFichierDansDossier(contexte: Context, nomFichier: String, valeurFichier: String) {
+        val fichier = File(contexte.filesDir, nomFichier)
 
         try {
-            FileOutputStream(file).use { outputStream ->
-                outputStream.write(fileContent.toByteArray())
+            FileOutputStream(fichier).use { outputStream ->
+                outputStream.write(valeurFichier.toByteArray())
             }
         } catch (e: IOException) {
             e.printStackTrace()
