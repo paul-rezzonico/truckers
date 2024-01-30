@@ -9,11 +9,11 @@ import org.junit.Test
 class MessageTest {
     @Test
     fun devraitCreerUnMessageAvecIdDeux() {
-        val message = Message(NumeroTelephone("0987654321"),
+        val message = Message(NumeroTelephone("0987654321").numeroTelephone,
         "Premier Message",
         "01/01/2020 00:00:00")
 
-        val message2 = Message(NumeroTelephone("0123456789"),
+        val message2 = Message(NumeroTelephone("0123456789").numeroTelephone,
     "Deuxième Message",
     "01/01/2020 00:00:00")
 

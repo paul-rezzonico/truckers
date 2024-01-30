@@ -1,8 +1,10 @@
+// com/unilim/iut/truckers/test/unit/JsonControleurTest.kt
 package com.unilim.iut.truckers.test.unit
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.unilim.iut.truckers.controleur.JsonControleur
+import com.unilim.iut.truckers.modele.JsonData
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.After
@@ -26,7 +28,7 @@ class JsonControleurTest {
 
     @Test
     fun devraitCreerUnFichierJson() {
-        jsonControleur.creationFichierJSON(context, "test.json", "test")
+        jsonControleur.creationFichierJSON(JsonData(context, "test.json", "testField", null, null))
 
         val file = File(context.filesDir, "test.json")
         assertTrue(file.exists())
@@ -38,7 +40,7 @@ class JsonControleurTest {
         val initialJsonContent = "{\"$champs\":[]}"
         createFileInFilesDir(context, "test.json", initialJsonContent)
 
-        val result = jsonControleur.sauvegarderDonneesDansJSON(context, "test.json", champs, "newTestValue")
+        val result = jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "test.json", champs, "newTestValue", null))
         val file = File(context.filesDir, "test.json")
 
         assertTrue(result)
@@ -49,7 +51,7 @@ class JsonControleurTest {
     fun neDevraitPasEcrireDansUnFichierJsonSiIlNExistePasMaisLeCreer() {
         val champs = "testField"
 
-        val result = jsonControleur.sauvegarderDonneesDansJSON(context, "test.json", champs, "newTestValue")
+        val result = jsonControleur.sauvegarderDonneesDansJSON(JsonData(context, "test.json", champs, "newTestValue", null))
         val file = File(context.filesDir, "test.json")
 
         assertTrue(!result)
@@ -62,7 +64,7 @@ class JsonControleurTest {
         val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
         createFileInFilesDir(context, "test.json", initialJsonContent)
 
-        val result = jsonControleur.chargerDonneesDuJSON(context, "test.json")
+        val result = jsonControleur.chargerDonneesDuJSON(JsonData(context, "test.json", champs, null, null))
 
         assertTrue(result.getString(champs) == "[\"testValue\"]")
     }
@@ -73,7 +75,7 @@ class JsonControleurTest {
         val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
         createFileInFilesDir(context, "test.json", initialJsonContent)
 
-        val result = jsonControleur.suppressionFichierJSON(context, "test.json")
+        val result = jsonControleur.suppressionFichierJSON(JsonData(context, "test.json", champs, null, null))
         val file = File(context.filesDir, "test.json")
 
         assertTrue(result)
@@ -82,7 +84,7 @@ class JsonControleurTest {
 
     @Test
     fun neDevraitPasSupprimerUnFichierJsonSiIlNExistePas() {
-        val result = jsonControleur.suppressionFichierJSON(context, "test.json")
+        val result = jsonControleur.suppressionFichierJSON(JsonData(context, "test.json", null, null, null))
         val file = File(context.filesDir, "test.json")
 
         assertTrue(!result)
@@ -95,7 +97,7 @@ class JsonControleurTest {
         val initialJsonContent = "{\"$champs\":[\"testValue\"]}"
         createFileInFilesDir(context, "test.json", initialJsonContent)
 
-        val result = jsonControleur.supprimerDonneesDansJSON(context, "test.json", champs, "testValue", -1)
+        val result = jsonControleur.supprimerDonneesDansJSON(JsonData(context, "test.json", champs, "testValue", null))
         val file = File(context.filesDir, "test.json")
 
         assertTrue(result)
@@ -113,5 +115,4 @@ class JsonControleurTest {
             e.printStackTrace()
         }
     }
-
 }
