@@ -24,16 +24,6 @@ class DefautControleur {
     }
 
     /**
-     * Cette fonction permet de créer un fichier JSON contenant une liste de String mot-clés.
-     *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @return Cette fonction ne retourne rien.
-     */
-    fun chargementJson(contexte: Context?): String {
-        return controleurJson.chargerDonneesDuJSON(JsonData(contexte, nomFichierDefaut, null, null, null)).toString()
-    }
-
-    /**
      * Cette fonction permet de charger une liste de String mot-clés.
      *
      * @param contexte Ce paramètre est le contexte de l'application.
