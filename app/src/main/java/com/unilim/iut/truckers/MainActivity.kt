@@ -16,7 +16,6 @@ import androidx.work.WorkManager
 import com.unilim.iut.truckers.commande.AjoutNumeroAdminCommande
 import com.unilim.iut.truckers.commande.AjoutMotCleCommande
 import com.unilim.iut.truckers.commande.AjoutNumeroListeBlancheCommande
-import com.unilim.iut.truckers.commande.HistoriqueDeCommande
 import com.unilim.iut.truckers.controleur.CommandeControleur
 import com.unilim.iut.truckers.controleur.DefautControleur
 import com.unilim.iut.truckers.controleur.MotCleControleur
@@ -31,9 +30,6 @@ import org.koin.core.context.startKoin
 import java.util.concurrent.TimeUnit
 
 class MainActivity : Activity() {
-    companion object {
-        val historique: HistoriqueDeCommande = HistoriqueDeCommande()
-    }
 
     private val controleurCommande = CommandeControleur()
     private val controleurListeBlanche = ListeBlancheControleur()

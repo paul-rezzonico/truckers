@@ -2,6 +2,7 @@ package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.os.Environment
+import com.unilim.iut.truckers.modele.JsonData
 import com.unilim.iut.truckers.modele.NumeroTelephone
 import java.io.File
 
@@ -29,7 +30,7 @@ class DefautControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun chargementJson(contexte: Context?): String {
-        return controleurJson.chargerDonneesDuJSON(contexte, nomFichierDefaut).toString()
+        return controleurJson.chargerDonneesDuJSON(JsonData(contexte, nomFichierDefaut, null, null, null)).toString()
     }
 
     /**
@@ -39,7 +40,7 @@ class DefautControleur {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementMotsClesDefaut(contexte: Context?): MutableList<String> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, nomFichierDefaut)
+        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, nomFichierDefaut, null, null, null))
         val liste = mutableListOf<String>()
 
         val tableauJSON = objetJson.getJSONArray("mots_cles")
@@ -59,7 +60,7 @@ class DefautControleur {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementListeBlancheDefaut(contexte: Context?, nomTableauJson: String): MutableList<NumeroTelephone> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, nomFichierDefaut)
+        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, nomFichierDefaut, null, null, null))
         val liste = mutableListOf<NumeroTelephone>()
 
         val tableauJson = objetJson.getJSONArray(nomTableauJson)

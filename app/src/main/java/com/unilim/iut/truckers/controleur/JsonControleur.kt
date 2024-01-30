@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.unilim.iut.truckers.exception.LectureListeBlancheException
 import com.unilim.iut.truckers.exception.EcritureListeBlancheException
 import com.unilim.iut.truckers.facade.IFacadeDePersistence
+import com.unilim.iut.truckers.modele.JsonData
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -18,22 +19,22 @@ class JsonControleur : IFacadeDePersistence{
     private val jackson = ObjectMapper().registerModule(KotlinModule())
     private val logcatControleur = LogcatControleur()
 
-    fun creationFichierJSON(contexte: Context?, cheminFichier: String, champs: String) {
-        val fichier = File(contexte?.filesDir, cheminFichier)
+    fun creationFichierJSON(jsonData: JsonData) {
+        val fichier = File(jsonData.contexte?.filesDir, jsonData.cheminFichier)
         if (fichier.exists()) {
-            Log.d("TruckerService", "Le fichier JSON existe déjà : $cheminFichier")
-            logcatControleur.ecrireDansFichierLog("Le fichier JSON existe déjà : $cheminFichier")
+            Log.d("TruckerService", "Le fichier JSON existe déjà : ${jsonData.cheminFichier}")
+            logcatControleur.ecrireDansFichierLog("Le fichier JSON existe déjà : ${jsonData.cheminFichier}")
             return
         }
-        Log.d("TruckerService", "Création du fichier JSON : $cheminFichier")
-        logcatControleur.ecrireDansFichierLog("Création du fichier JSON : $cheminFichier")
+        Log.d("TruckerService", "Création du fichier JSON : ${jsonData.cheminFichier}")
+        logcatControleur.ecrireDansFichierLog("Création du fichier JSON : ${jsonData.cheminFichier}")
 
         val objetJson = JSONObject()
-        objetJson.put(champs, JSONArray())
+        jsonData.champs?.let { objetJson.put(it, JSONArray()) }
 
         try {
             val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
+                jsonData.contexte?.openFileOutput(jsonData.cheminFichier, Context.MODE_PRIVATE)
 
             fluxSortie?.write(objetJson.toString(4).toByteArray())
             fluxSortie?.close()
@@ -47,19 +48,19 @@ class JsonControleur : IFacadeDePersistence{
     /**
      * Cette fonction permet de supprimer un fichier JSON en fonction du chemin du fichier.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
+     * @param jsonData Ce paramètre est l'objet JsonData contenant le contexte de l'application et le chemin du fichier JSON.
      * @return Cette fonction ne retourne rien.
      */
-    fun suppressionFichierJSON(contexte: Context?, cheminFichier: String): Boolean {
-        val fichier = File(contexte?.filesDir, cheminFichier)
+    fun suppressionFichierJSON(jsonData: JsonData): Boolean {
+        val fichier = File(jsonData.contexte?.filesDir, jsonData.cheminFichier)
         if (fichier.exists()) {
             val isDeleted = fichier.delete()
             if (isDeleted) {
-                Log.d("TruckerService", "Le fichier JSON a été supprimé : $cheminFichier")
-                logcatControleur.ecrireDansFichierLog("Le fichier JSON a été supprimé : $cheminFichier")
+                Log.d("TruckerService", "Le fichier JSON a été supprimé : ${jsonData.cheminFichier}")
+                logcatControleur.ecrireDansFichierLog("Le fichier JSON a été supprimé : ${jsonData.cheminFichier}")
             } else {
-                Log.e("TruckerService", "Échec de la suppression du fichier JSON : $cheminFichier")
-                logcatControleur.ecrireDansFichierLog("Échec de la suppression du fichier JSON : $cheminFichier")
+                Log.e("TruckerService", "Échec de la suppression du fichier JSON : ${jsonData.cheminFichier}")
+                logcatControleur.ecrireDansFichierLog("Échec de la suppression du fichier JSON : ${jsonData.cheminFichier}")
             }
             return isDeleted
         }
@@ -69,30 +70,27 @@ class JsonControleur : IFacadeDePersistence{
     /**
      * Cette fonction permet d'ajouter un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param donnees Ce paramètre est l'objet Message à ajouter dans le fichier JSON.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param champs Ce paramètre est le nom de l'objet JSON.
+     * @param jsonData Ce paramètre est l'objet JsonData contenant le contexte de l'application, le chemin du fichier JSON, le nom de l'objet JSON et l'objet Message.
      * @return Cette fonction ne retourne rien.
      */
-    override fun sauvegarderDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean {
+    override fun sauvegarderDonneesDansJSON(jsonData: JsonData): Boolean {
 
-        val donneesSerialisees = jackson.writeValueAsString(donnees)
+        val donneesSerialisees = jackson.writeValueAsString(jsonData.donnees)
         Log.d("TruckerService", donneesSerialisees)
 
-        val fichier = File(contexte?.filesDir, cheminFichier)
+        val fichier = File(jsonData.contexte?.filesDir, jsonData.cheminFichier)
         if (!fichier.exists()) {
-            creationFichierJSON(contexte, cheminFichier, champs)
+            creationFichierJSON(jsonData)
             return false
         }
 
-        val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
+        val fluxEntree: FileInputStream? = jsonData.contexte?.openFileInput(jsonData.cheminFichier)
         val json = fluxEntree?.bufferedReader().use { it?.readText() }?.let { JSONObject(it) }
 
-        val donneesJson : JSONArray? = if (json.toString() == "{}" || json?.has(champs) == false) {
+        val donneesJson : JSONArray? = if (json.toString() == "{}" || json?.has(jsonData.champs) == false) {
             JSONArray()
         } else {
-            json?.getJSONArray(champs)
+            jsonData.champs?.let { json?.getJSONArray(it) }
         }
 
         if (donneesJson != null) {
@@ -104,57 +102,52 @@ class JsonControleur : IFacadeDePersistence{
         }
 
         donneesJson?.put(donneesSerialisees)
-        json?.put(champs, donneesJson)
+        jsonData.champs?.let { json?.put(it, donneesJson) }
 
-        try {
+        return try {
             val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
+                jsonData.contexte?.openFileOutput(jsonData.cheminFichier, Context.MODE_PRIVATE)
 
             fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()
-            return true
+            true
         } catch (e: EcritureListeBlancheException) {
             Log.d("TruckerService", e.message)
             logcatControleur.ecrireDansFichierLog(e.message)
-            return false
+            false
         }
     }
 
     /**
      * Cette fonction permet de supprimer un objet Message dans un fichier JSON en fonction du chemin du fichier, du nom de l'objet JSON et de l'objet Message.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param donnees Ce paramètre est l'objet Message à supprimer dans le fichier JSON.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
-     * @param champs Ce paramètre est le nom de l'objet JSON.
+     * @param jsonData Ce paramètre est l'objet JsonData contenant le contexte de l'application, le chemin du fichier JSON, le nom de l'objet JSON, l'objet Message et le nombre de message enregistré.
      * @return Cette fonction ne retourne rien.
      */
-    override fun supprimerDonneesDansJSON(
-        contexte: Context?,
-        cheminFichier: String,
-        champs: String,
-        donnees: Any,
-        nombreMessageEnregistre: Int
-    ): Boolean {
-        val donneesSerialisees = jackson.writeValueAsString(donnees)
+    override fun supprimerDonneesDansJSON(jsonData: JsonData): Boolean {
+        val donneesSerialisees = jackson.writeValueAsString(jsonData.donnees)
 
-        val fichier = File(contexte?.filesDir, cheminFichier)
+        val fichier = File(jsonData.contexte?.filesDir, jsonData.cheminFichier)
         if (!fichier.exists()) {
-            creationFichierJSON(contexte, cheminFichier, champs)
+            creationFichierJSON(jsonData)
             return false
         }
 
-        val json = chargerDonneesDuJSON(contexte, cheminFichier)
+        val json = chargerDonneesDuJSON(jsonData)
         val liste: JSONArray? = if (json.toString() == "{}") {
             JSONArray()
         } else {
-            json.getJSONArray(champs)
+            jsonData.champs?.let { json.getJSONArray(it) }
         }
 
-        if (champs != "numero_admin" && liste != null) {
-            supprimerDonneesTableauJSON(liste, donneesSerialisees, nombreMessageEnregistre)
-            json.put(champs, liste)
-            AjouterDonneesJSONListeBlancheDansFichier(contexte, cheminFichier, json)
+        if (jsonData.champs != "numero_admin" && liste != null) {
+            jsonData.nombreMessageEnregistre?.let {
+                supprimerDonneesTableauJSON(liste, donneesSerialisees,
+                    it
+                )
+            }
+            jsonData.champs?.let { json.put(it, liste) }
+            ajouterDonneesJSONListeBlancheDansFichier(jsonData, json)
             return true
         }
 
@@ -165,20 +158,19 @@ class JsonControleur : IFacadeDePersistence{
     /**
      * Cette fonction permet de charger le contenu d'un fichier JSON.
      *
-     * @param contexte Ce paramètre est le contexte de l'application.
-     * @param cheminFichier Ce paramètre est le chemin du fichier JSON.
+     * @param jsonData Ce paramètre est l'objet JsonData contenant le contexte de l'application et le chemin du fichier JSON.
      * @return Cette fonction retourne le contenu du fichier JSON.
      */
-    override fun chargerDonneesDuJSON(contexte: Context?, cheminFichier: String): JSONObject {
+    override fun chargerDonneesDuJSON(jsonData: JsonData): JSONObject {
         var objetJson = JSONObject()
 
         try {
-            val fluxEntree: FileInputStream? = contexte?.openFileInput(cheminFichier)
-            if (fluxEntree != null && File(contexte.filesDir, cheminFichier).exists()) {
+            val fluxEntree: FileInputStream? = jsonData.contexte?.openFileInput(jsonData.cheminFichier)
+            if (fluxEntree != null && File(jsonData.contexte.filesDir, jsonData.cheminFichier).exists()) {
                 val jsonStr = fluxEntree.bufferedReader().use { it.readText() }
                 objetJson = JSONObject(jsonStr)
             } else {
-                Log.d("TruckerService", "Le fichier JSON n'existe pas : $cheminFichier")
+                Log.d("TruckerService", "Le fichier JSON n'existe pas : ${jsonData.cheminFichier}")
             }
         } catch (e: LectureListeBlancheException) {
             Log.d("TruckerService", e.message)
@@ -211,10 +203,10 @@ class JsonControleur : IFacadeDePersistence{
         }
     }
 
-    private fun AjouterDonneesJSONListeBlancheDansFichier(contexte: Context?, cheminFichier: String, json: JSONObject?) {
+    private fun ajouterDonneesJSONListeBlancheDansFichier(jsonData: JsonData, json: JSONObject?) {
         try {
             val fluxSortie: FileOutputStream? =
-                contexte?.openFileOutput(cheminFichier, Context.MODE_PRIVATE)
+                jsonData.contexte?.openFileOutput(jsonData.cheminFichier, Context.MODE_PRIVATE)
 
             fluxSortie?.write(json?.toString(4)?.toByteArray())
             fluxSortie?.close()

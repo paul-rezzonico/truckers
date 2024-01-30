@@ -14,9 +14,9 @@ import com.unilim.iut.truckers.commande.SupprimerMessageCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroAdminCommande
 import com.unilim.iut.truckers.commande.SupprimerMotCleCommande
 import com.unilim.iut.truckers.commande.SupprimerNumeroListeBlancheCommande
+import com.unilim.iut.truckers.modele.JsonData
 import com.unilim.iut.truckers.modele.Message
 import com.unilim.iut.truckers.modele.NumeroTelephone
-import okhttp3.ResponseBody
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,7 +39,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonBonMessage(contexte: Context?) {
-        controleurJson.creationFichierJSON(contexte, creationNomFichierJSON("MessageValide"), "messages")
+        controleurJson.creationFichierJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), "messages", null, null))
     }
 
     /**
@@ -50,11 +50,11 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansJsonBonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarderDonneesDansJSON(contexte, creationNomFichierJSON("MessageValide"), "messages", message)
+        controleurJson.sauvegarderDonneesDansJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), "messages", message, null))
     }
 
     fun avoirMessagesDansBonJsonMessage(contexte: Context?): MutableList<Message> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageValide"))
+        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, creationNomFichierJSON("MessageValide"), null, null, null))
         val liste = mutableListOf<Message>()
 
         if (objetJson.toString() == "{}") {
@@ -78,7 +78,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJsonMauvaisMessage(contexte: Context?) {
-        controleurJson.creationFichierJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages")
+        controleurJson.creationFichierJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), "messages", null, null))
     }
 
     /**
@@ -89,7 +89,7 @@ class MessageControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun ajoutMessageDansMauvaisJsonMessage(contexte: Context?, message: Message) {
-        controleurJson.sauvegarderDonneesDansJSON(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message)
+        controleurJson.sauvegarderDonneesDansJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), "messages", message, null))
     }
 
     /**
@@ -99,7 +99,7 @@ class MessageControleur {
      * @return Cette fonction retourne une liste d'objet Message.
      */
     fun avoirMessagesDansMauvaisJsonMessage(contexte: Context?): MutableList<Message> {
-        val objetJson = controleurJson.chargerDonneesDuJSON(contexte, creationNomFichierJSON("MessageInvalide"))
+        val objetJson = controleurJson.chargerDonneesDuJSON(JsonData(contexte, creationNomFichierJSON("MessageInvalide"), null, null, null))
         val liste = mutableListOf<Message>()
 
         if (objetJson.toString() == "{}") {

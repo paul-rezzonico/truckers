@@ -1,6 +1,5 @@
 package com.unilim.iut.truckers.controleur
 
-import com.unilim.iut.truckers.MainActivity
 import com.unilim.iut.truckers.commande.Commande
 
 class CommandeControleur {
@@ -11,6 +10,5 @@ class CommandeControleur {
      */
     fun executerCommande(commande: Commande) {
         commande.executer()
-        MainActivity.historique.ajouter(commande)
     }
 }

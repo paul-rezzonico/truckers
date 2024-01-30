@@ -3,6 +3,7 @@ package com.unilim.iut.truckers.controleur
 import android.content.Context
 import android.util.Log
 import com.unilim.iut.truckers.exception.LectureListeBlancheException
+import com.unilim.iut.truckers.modele.JsonData
 import org.json.JSONObject
 
 class ListeBlancheControleur {
@@ -17,7 +18,7 @@ class ListeBlancheControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationListeBlanche(contexte: Context?) {
-        jsonControleur.creationFichierJSON(contexte, "ListeBlanche.json", "liste_blanche")
+        jsonControleur.creationFichierJSON(JsonData(contexte, "ListeBlanche.json", "liste_blanche", null, null))
     }
 
     /**
@@ -26,8 +27,8 @@ class ListeBlancheControleur {
      * @param context Ce paramètre est le contexte de l'application.
      * @return Cette fonction retourne le numéro de téléphone de l'administrateur.
      */
-    fun chargementJson(context: Context?): JSONObject {
-        return jsonControleur.chargerDonneesDuJSON(context, "ListeBlanche.json")
+    private fun chargementJson(context: Context?): JSONObject {
+        return jsonControleur.chargerDonneesDuJSON(JsonData(context, "ListeBlanche.json", null, null, null))
     }
 
     /**

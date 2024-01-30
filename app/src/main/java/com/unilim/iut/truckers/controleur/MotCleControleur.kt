@@ -2,6 +2,7 @@ package com.unilim.iut.truckers.controleur
 
 import android.content.Context
 import android.util.Log
+import com.unilim.iut.truckers.modele.JsonData
 
 class MotCleControleur {
 
@@ -15,7 +16,7 @@ class MotCleControleur {
      * @return Cette fonction ne retourne rien.
      */
     fun creationJSONMotCle(contexte: Context?) {
-        jsonControleur.creationFichierJSON(contexte, "MotsCles.json", "mots_cles")
+        jsonControleur.creationFichierJSON(JsonData(contexte, "MotsCles.json", "mots_cles", null, null))
     }
 
     /**
@@ -25,7 +26,7 @@ class MotCleControleur {
      * @return Cette fonction retourne une liste de String mot-clés.
      */
     fun chargementMotsCles(context: Context?): MutableList<String> {
-        val jsonObject = jsonControleur.chargerDonneesDuJSON(context, "MotsCles.json")
+        val jsonObject = jsonControleur.chargerDonneesDuJSON(JsonData(context, "MotsCles.json", null, null, null))
         val motsCles = mutableListOf<String>()
 
         if (jsonObject.has("mots_cles")) {

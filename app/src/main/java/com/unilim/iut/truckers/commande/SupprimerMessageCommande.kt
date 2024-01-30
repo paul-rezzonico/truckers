@@ -3,6 +3,7 @@ package com.unilim.iut.truckers.commande
 import android.content.Context
 import android.util.Log
 import com.unilim.iut.truckers.controleur.LogcatControleur
+import com.unilim.iut.truckers.modele.JsonData
 
 class SupprimerMessageCommande (
     override var context: Context?,
@@ -15,9 +16,7 @@ class SupprimerMessageCommande (
 
     override fun executer(): Boolean {
         val effectue = donnee?.let {
-            jsonControleur.supprimerDonneesDansJSON(
-                context, cheminFichier, "messages", it, nombreMessageEnregistre
-            )
+            jsonControleur.supprimerDonneesDansJSON(JsonData(context, cheminFichier, "liste_blanche", it, nombreMessageEnregistre))
         }
         if (effectue == false) {
             Log.d("TruckerService", "Suppression d'un message dans le fichier $cheminFichier impossible: $donnee")

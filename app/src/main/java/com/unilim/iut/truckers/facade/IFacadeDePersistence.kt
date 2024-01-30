@@ -1,10 +1,10 @@
 package com.unilim.iut.truckers.facade
 
-import android.content.Context
+import com.unilim.iut.truckers.modele.JsonData
 
 interface IFacadeDePersistence {
 
-    fun sauvegarderDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any): Boolean
-    fun chargerDonneesDuJSON(contexte: Context?, cheminFichier: String) : Any
-    fun supprimerDonneesDansJSON(contexte: Context?, cheminFichier: String, champs: String, donnees: Any, nombreMessageEnregistre: Int): Boolean
+    fun sauvegarderDonneesDansJSON(jsonData: JsonData): Boolean
+    fun chargerDonneesDuJSON(jsonData: JsonData) : Any
+    fun supprimerDonneesDansJSON(jsonData: JsonData): Boolean
 }
