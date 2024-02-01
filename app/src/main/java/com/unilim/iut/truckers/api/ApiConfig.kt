@@ -7,7 +7,7 @@ object ApiConfig {
 
     private val BASE_URL: HttpUrl = HttpUrl.Builder()
         .scheme("http")
-        .host("10.0.2.2")
+        .host("iloveahri.com")
         .port(8080)
         .build()
 

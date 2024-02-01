@@ -9,6 +9,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.InetAddress
 
 class ApiManager(
     private val contexte: Context
@@ -21,13 +22,16 @@ class ApiManager(
 
         val json = Gson().toJson(messageEnvelope)
         val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
-        val request = Request.Builder()
-            .url(ApiConfig.buildApiUrl(cheminURL))
-            .post(requestBody)
-            .build()
+        val url = ApiConfig.buildApiUrl(cheminURL)
 
         try {
+            val request = Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build()
+
             val response = client.newCall(request).execute()
+
             if (!response.isSuccessful) {
                 val responseBody = response.body?.string() ?: "Pas de réponse"
                 Log.d("TruckerService", "Erreur $cheminURL : $responseBody")
