@@ -1,77 +1,139 @@
-# Truckers
+# TRUCKERS
 
-Ce service a pour but de traquer les messages de chauffeurs liés à leurs itinéraires, rendez-vous, livraisons, etc.
+## Overview
 
-## Ajout du Fichier Défaut
+<table>
+  <tr>
+    <td>
+      <img alt="Latice DxD Logo" src="app\src\main\res\truckers-logo.png" width="200">
+    </td>
+    <td>
+      <p>Truckers is an Android service that tracks messages from truck drivers related to their routes, appointments, deliveries, etc. The service retrieves messages received by drivers while filtering out message from invlaids sources. The service then save messages before synchronizing them in a REST API to have a history of the messages received on the Admin side.</p>
+    </td>
+  </tr>
+</table>
 
-Pour que le service puisse se lancer, il faut donner à l'application un fichier défaut.json (contenant minimum un numéro admin par défaut).
+## Table of contents
 
-1. Ouvrez un gestionnaire de fichiers sur votre téléphone.
+- [Overview](#overview)
+- [Table of contents](#table-of-contents)
+- [Features](#features)
+   - [Exemple of Valid Messages](#exemple-of-valid-messages)
+   - [Exemple of Invalid Message](#exemple-of-invalid-message)
+- [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Admin Configuration](#admin-configuration)
+  - [Message Storage](#message-storage)
+- [Technologies used](#technologies-used)
+- [RNCP referential](#rncp-referential)
 
-2. Accédez au répertoire de téléchargements.
+## Features
 
-3. Placer le fichier defaut.json
+- **Receive Messages:** The service automatically retrieves messages received by drivers.
 
-4. Lancer l'application, après avoir validé les permissions pour le stockage ainsi que les sms, le service devrait se lancer et créer un fichier logcat.txt dans le même répertoire que le fichier defaut. 
+- **Filter sender:** The service filters out messages from invalid sources.
+- **Filter messages:** The service filters out invalid messages, and stores valid and invalid messages in separate files.
+- **Manage Messages:** The stored messages are synchronized in a REST API to have a history of the messages received on the Admin side.
 
+### Exemple of Valid Messages
 
-Le fichier "defaut.json" contient les configurations par défaut nécessaires pour le bon fonctionnement de l'application. Veillez à ne pas modifier ce fichier de manière inappropriée pour éviter tout problème de configuration.
-Vous pouvez relancer l'application, le service va se lancer et rester actif.
+- **Appointment :** 
+```	
+RDV prévu le 4 janvier à 14h
+```
 
+### Exemple of Invalid Message
 
-## Utilisation de l'Application
+- **Invalid Message :** 
+```
+Bonjour, pouvez-vous m’indiquer votre position ? Pouvez-vous me répondre maintenant ?
+```
 
-1. **Recevoir des Messages :**
-   - Le service récupère automatiquement les messages reçus par les chauffeurs.
-   - Les messages valides sont stockés, tandis que les messages invalides sont ignorés.
+## Installation
 
-2. **Gérer les Messages :**
-   - Les messages stockés seront synchronisés dans une API REST afin d'avoir un historique des messages reçus côté Admin.
+1. Clone the repository.
 
-## Exemples de Messages Validés
+```bash
+git clone  https://github.com/paul-rezzonico/truckers.git
+```
 
-- **Rendez-vous :** RDV 4 rue Pasteur 18h00
-- **Livraison :** LIVRAISON prévue le 4 janvier
+2. Open the project in Android Studio.
 
-## Exemple de Message Invalide
+3. Run the project on an Android device.
 
-- Bonjour, pouvez-vous m’indiquer votre position ? Pouvez-vous me répondre maintenant ?
+### Configuration
 
-## Configuration Administrative
+To use the application, you need to give the application the necessary permissions to access the storage and SMS. You also need to provide a default file to the application.
 
-Les administrateurs peuvent configurer l'application en utilisant des messages de configuration spécifiques.
+1. Open a file manager on your phone.
 
-- **Ajout de Numéro :** CONFIG Ajout numéro 011111111111
-- **Suppression de Numéro :** CONFIG Suppression numéro 011111111111
-- **Ajout de Mot-clé :** CONFIG Ajout mot-clé RENDEZ-VOUS
-- **Suppression de Mot-clé :** CONFIG Suppression mot-clé RENDEZ-VOUS
-- **Ajout d'Administrateur :** CONFIG Ajout administrateur 0453627283
-- **Suppression d'Administrateur :** CONFIG Suppression administrateur 023923492
+2. Go to the downloads directory.
 
-## Stockage des Messages
+3. Place the defaut.json file in the directory.
 
-Les messages sont stockés dans le répertoire `/data/data/com.unilim.iut.truckers/files`. Ils sont répartis dans deux fichiers distincts en fonction de leur validité. Chaque jour, de nouveaux fichiers sont créés pour minimiser les risques de perte d'informations.
+4. Launch the application, after validating the permissions for storage and SMS, the service should start and create a logcat.txt file in the same directory as the default file.
 
-1. Ouvrez le device explorer sur Android Studio.
+The "defaut.json" file contains the default configurations necessary for the proper functioning of the application. Be sure not to inappropriately modify this file to avoid any configuration problems. You can restart the application, the service will start and remain active.
 
-2. Accédez au répertoire `/data/data/com.unilim.iut.truckers/files`.
+### Admin Configuration
 
-3. Vous y trouverez les fichiers `messagesValides-date` et `messageInvalides-date`.
+Administrators can configure the application using specific configuration messages.
 
-4. Pour consulter les messages ouvrez les fichiers avec un éditeur de texte.
+- **Add Number:**  
+```
+CONFIG Ajout numéro 011111111111
+```
+- **Delete Number:** 
+```
+CONFIG Suppression numéro 011111111111
+```
+- **Add Keyword:** 
+```
+CONFIG Ajout mot-clé RENDEZ-VOUS
+```
+- **Delete Keyword:**
+```
+CONFIG Suppression mot-clé RENDEZ-VOUS
+```
+- **Add Administrator:**
+```
+CONFIG Ajout administrateur 023923492
+```
+- **Delete Administrator:**
+```
+CONFIG Suppression administrateur 023923492
+```
 
+### Message Storage
 
+Messages are stored in the directory `/data/data/com.unilim.iut.truckers/files`. They are divided into two separate files based on their validity. Each day, new files are created to minimize the risk of information loss.
 
-## Consulter les Logs
+1. Open the device explorer in Android Studio.
 
-Pour vérifier le bon fonctionnement du service, vous pouvez consulter les logs enregistrés dans le fichier "logcat.txt" sur votre téléphone, accessible dans votre répertoire de téléchargements.
+2. Go to the directory `/data/data/com.unilim.iut.truckers/files`.
 
-1. Ouvrez un gestionnaire de fichiers sur votre téléphone.
+3. You will find the files `messagesValides-date` and `messageInvalides-date`.
 
-2. Accédez au répertoire de téléchargements.
+4. To view the messages, open the files with a text editor.
 
-3. Recherchez le fichier "logcat.txt" et ouvrez-le avec un éditeur de texte.
+## Technologies used
+- **Kotlin:** ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white)
+- **Android:** ![Android](https://img.shields.io/badge/Android-3DDC84?style=flat&logo=android&logoColor=white)
 
-4. Vous verrez les détails des actions du service en réponse à la réception des messages.
+## RNCP referential
 
+| Skill | Description | How it's used in the project |
+| :---: | :---------: | :--------------------------: |
+| **![RNCP35475BC01](https://img.shields.io/badge/RNCP35475BC01-3-00BFFF?style=flat)** | Perform an application development | With this project, I was able to develop a Java application from scratch. I used the JavaFX library to create the GUI and implemented the game logic in Java. |
+| **![RNCP35475BC02](https://img.shields.io/badge/RNCP35475BC02-3-00BFFF?style=flat)** | Optimize IT applications | I used Test and Debugging techniques to ensure the application runs smoothly. |
+| **![RNCP35475BC03](https://img.shields.io/badge/RNCP35475BC03-3-00BFFF?style=flat)** | Administer communicating computer systems | I used the Android API to communicate with the phone's SMS system. |
+| **![RNCP35475BC04](https://img.shields.io/badge/RNCP35475BC04-3-00BFFF?style=flat)** | Manage information data | I used the Android API to manage the storage of the messages. I also used the JSON format to store the configuration of the application.
+| **![RNCP35475BC05](https://img.shields.io/badge/RNCP35475BC05-3-00BFFF?style=flat)** | Lead a project | I worked with a team as a scrum master to develop this project. We used the Agile methodology and youtrack to manage the project.
+| **![RNCP35475BC06](https://img.shields.io/badge/RNCP35475BC06-3-00BFFF?style=flat)** | Working in an IT team | I worked with a team to develop this project. |
+| **![RNCP35475BC07](https://img.shields.io/badge/RNCP35475BC07-3-00BFFF?style=flat)** | Uses of digital tools | I used youtrack to manage the project. |
+| **![RNCP35475BC08](https://img.shields.io/badge/RNCP35475BC08-3-00BFFF?style=flat)** | Use of data for analysis | I used the android API to ckeck the validity of incoming messages. |
+
+----
+
+Thank you for reading this far. This project is supposed to work with the ReST API project. You can find it [here](https://github.com/paul-rezzonico/truckers_api/tree/main).
 
