@@ -5,7 +5,7 @@
 <table>
   <tr>
     <td>
-      <img alt="Latice DxD Logo" src="app\src\main\res\truckers-logo.png" width="200">
+      <img alt="Latice DxD Logo" src="app\src\main\res\truckers-logo.png" width="400">
     </td>
     <td>
       <p>Truckers is an Android service that tracks messages from truck drivers related to their routes, appointments, deliveries, etc. The service retrieves messages received by drivers while filtering out message from invlaids sources. The service then save messages before synchronizing them in a REST API to have a history of the messages received on the Admin side.</p>
