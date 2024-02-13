@@ -21,9 +21,11 @@
    - [Exemple of Valid Messages](#exemple-of-valid-messages)
    - [Exemple of Invalid Message](#exemple-of-invalid-message)
 - [Installation](#installation)
-  - [Configuration](#configuration)
-  - [Admin Configuration](#admin-configuration)
-  - [Message Storage](#message-storage)
+  - [Run truckers ReST API](#run-truckers-rest-api)
+  - [Run the application](#run-the-application)
+- [Configuration](#configuration)
+- [Admin Configuration](#admin-configuration)
+- [Message Storage](#message-storage)
 - [Technologies used](#technologies-used)
 - [RNCP referential](#rncp-referential)
 
@@ -80,7 +82,7 @@ git clone  https://github.com/paul-rezzonico/truckers.git
 3. Run the project on an Android device.
 
 
-### Configuration
+## Configuration
 
 To use the application, you need to give the application the necessary permissions to access the storage and SMS. You also need to provide a default file to the application.
 
@@ -94,7 +96,7 @@ To use the application, you need to give the application the necessary permissio
 
 The "defaut.json" file contains the default configurations necessary for the proper functioning of the application. Be sure not to inappropriately modify this file to avoid any configuration problems. You can restart the application, the service will start and remain active.
 
-### Admin Configuration
+## Admin Configuration
 
 Administrators can configure the application using specific configuration messages.
 
@@ -123,7 +125,7 @@ CONFIG Ajout administrateur 023923492
 CONFIG Suppression administrateur 023923492
 ```
 
-### Message Storage
+## Message Storage
 
 Messages are stored in the directory `/data/data/com.unilim.iut.truckers/files`. They are divided into two separate files based on their validity. Each day, new files are created to minimize the risk of information loss.
 
