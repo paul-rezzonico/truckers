@@ -5,7 +5,7 @@
 <table>
   <tr>
     <td>
-      <img alt="Latice DxD Logo" src="app\src\main\res\truckers-logo.png" width="400">
+      <img alt="Truckers Logo" src="app\src\main\res\truckers-logo.png" width="400">
     </td>
     <td>
       <p>Truckers is an Android service that tracks messages from truck drivers related to their routes, appointments, deliveries, etc. The service retrieves messages received by drivers while filtering out message from invlaids sources. The service then save messages before synchronizing them in a REST API to have a history of the messages received on the Admin side.</p>
@@ -51,6 +51,24 @@ Bonjour, pouvez-vous m’indiquer votre position ? Pouvez-vous me répondre main
 
 ## Installation
 
+### Run truckers ReST API
+
+to ensure synchronization of the messages, you need to run the truckers ReST API. To run it you just need docker installed. 
+
+1. Pull the image from the docker hub
+```bash
+  docker pull iloveahri/truckers-api
+```
+
+2. Run the image
+```bash
+  docker run -p 8080:8080 -d --name "truckers-api" iloveahri/truckers-api
+```
+
+3. You can now access the API at `http://localhost:8080`
+
+### Run the application
+
 1. Clone the repository.
 
 ```bash
@@ -60,6 +78,7 @@ git clone  https://github.com/paul-rezzonico/truckers.git
 2. Open the project in Android Studio.
 
 3. Run the project on an Android device.
+
 
 ### Configuration
 
